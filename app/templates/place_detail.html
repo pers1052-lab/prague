@@ -1,39 +1,41 @@
 {% extends "base.html" %}
 {% block title %}{{ place.name }}{% endblock %}
 {% block content %}
-<div class="card">
+<p class="small"><a href="/places">장소공유 목록</a></p>
+<div class="page-head">
   <span class="cat">{{ place.category }}</span>
   <h1>{{ place.name }}</h1>
-  {% if avg_rating %}
-    <div class="rating">★ {{ avg_rating }} ({{ review_count }}개 리뷰)</div>
-  {% else %}
-    <div class="rating" style="color:var(--ink-soft);">아직 리뷰 없음</div>
-  {% endif %}
-  {% if place.photo_path %}
-    <img src="{{ place.photo_path }}" style="width:100%; max-height:360px; object-fit:cover; border-radius:8px; margin:16px 0;">
-  {% endif %}
-  {% if place.description %}<p>{{ place.description }}</p>{% endif %}
-
-  <iframe class="map-embed" loading="lazy"
-    src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBnGD5S-fTVIvupCbA-QTsklqDB8aiXDpk&q={{ place.lat }},{{ place.lng }}&zoom=16">
-  </iframe>
-
-  {% if user %}
-    <form method="post" action="/places/{{ place.id }}/favorite" style="margin-top:14px;">
+  <div class="detail-meta">
+    {% if avg_rating %}
+      <span class="rating">★ {{ avg_rating }} <span class="muted">({{ review_count }}개 리뷰)</span></span>
+    {% else %}
+      <span class="rating none">아직 리뷰 없음</span>
+    {% endif %}
+    {% if user %}
+    <form method="post" action="/places/{{ place.id }}/favorite">
       <button class="fav-btn {{ 'active' if is_favorite else '' }}" type="submit">
         {{ '♥ 즐겨찾기 해제' if is_favorite else '♡ 즐겨찾기 추가' }}
       </button>
     </form>
-  {% endif %}
+    {% endif %}
+  </div>
 </div>
 
-<div class="card">
+<div class="panel">
+  {% if place.photo_path %}<img class="detail-photo" src="{{ place.photo_path }}" alt="{{ place.name }}">{% endif %}
+  {% if place.description %}<p>{{ place.description }}</p>{% endif %}
+  <iframe class="map-embed" loading="lazy" title="{{ place.name }} 지도"
+    src="https://www.google.com/maps/embed/v1/place?key={{ maps_key }}&q={{ place.lat }},{{ place.lng }}&zoom=16">
+  </iframe>
+</div>
+
+<div class="panel">
   <h2>리뷰 {{ review_count }}개</h2>
   {% if user %}
-  <form class="stack" method="post" action="/places/{{ place.id }}/review" style="margin-bottom:20px;">
+  <form class="stack narrow" method="post" action="/places/{{ place.id }}/review" style="margin-bottom:24px;">
     <div>
-      <label>평점</label>
-      <select name="rating">
+      <label for="rating">평점</label>
+      <select id="rating" name="rating">
         <option value="5">★★★★★ (5)</option>
         <option value="4">★★★★ (4)</option>
         <option value="3">★★★ (3)</option>
@@ -42,23 +44,23 @@
       </select>
     </div>
     <div>
-      <label>후기</label>
-      <textarea name="comment" placeholder="다녀온 소감을 남겨주세요"></textarea>
+      <label for="comment">후기</label>
+      <textarea id="comment" name="comment" placeholder="다녀온 소감을 남겨주세요"></textarea>
     </div>
-    <button class="btn" type="submit" style="width:fit-content;">리뷰 등록</button>
+    <button class="btn" type="submit">리뷰 등록</button>
   </form>
   {% else %}
-    <p style="color:var(--ink-soft);"><a href="/login">로그인</a> 후 리뷰를 남길 수 있습니다.</p>
+    <p class="muted"><a href="/login">로그인</a> 후 리뷰를 남길 수 있습니다.</p>
   {% endif %}
 
   {% for r in reviews %}
   <div class="review">
     <div class="rating">{{ '★' * r.rating }}{{ '☆' * (5 - r.rating) }}</div>
-    {% if r.comment %}<p style="margin:4px 0;">{{ r.comment }}</p>{% endif %}
+    {% if r.comment %}<p>{{ r.comment }}</p>{% endif %}
     <div class="meta">{{ r.nickname }} · {{ r.created_at[:10] }}</div>
   </div>
   {% else %}
-  <p style="color:var(--ink-soft);">아직 리뷰가 없습니다. 첫 리뷰를 남겨보세요!</p>
+  <p class="muted">아직 리뷰가 없습니다. 첫 리뷰를 남겨보세요!</p>
   {% endfor %}
 </div>
 {% endblock %}

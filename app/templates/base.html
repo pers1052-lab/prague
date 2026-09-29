@@ -5,35 +5,80 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}프라하 가족여행 가이드{% endblock %}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Hahmlet:wght@500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/style.css">
+{% block head %}{% endblock %}
 </head>
 <body>
 <header class="site-header">
-  <div class="header-inner">
-    <a class="brand" href="/">프라하 가족여행</a>
-    <nav class="main-nav">
-      <a href="/journal" class="{{ 'active' if active=='journal' else '' }}">여행일지</a>
-      <a href="/places" class="{{ 'active' if active=='places' else '' }}">장소공유</a>
-      <a href="/transit" class="{{ 'active' if active=='transit' else '' }}">교통정보</a>
-      <a href="/inquiry" class="{{ 'active' if active=='inquiry' else '' }}">문의하기</a>
-      {% if user %}
-        <a href="/favorites" class="{{ 'active' if active=='favorites' else '' }}">즐겨찾기</a>
-        <span style="color:var(--ink-soft)">{{ user.nickname }}님</span>
-        <a href="/logout">로그아웃</a>
-      {% else %}
-        <a href="/login" class="{{ 'active' if active=='login' else '' }}">로그인</a>
-        <a href="/register" class="btn" style="padding:6px 14px;">회원가입</a>
-      {% endif %}
-    </nav>
+  <div class="masthead">
+    <button type="button" class="menu-toggle" aria-label="메뉴 열기" aria-controls="drawer" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="/" aria-label="프라하 가족여행 홈">
+      <span class="brand-latin">Praha</span>
+      <span class="brand-ko">프라하 가족여행</span>
+    </a>
   </div>
+  <nav class="main-nav">
+    <a href="/journal" class="{{ 'active' if active=='journal' else '' }}">여행일지</a>
+    <a href="/places" class="{{ 'active' if active=='places' else '' }}">장소공유</a>
+    <a href="/transit" class="{{ 'active' if active=='transit' else '' }}">교통정보</a>
+    <a href="/inquiry" class="{{ 'active' if active=='inquiry' else '' }}">문의하기</a>
+    {% if user %}<a href="/favorites" class="{{ 'active' if active=='favorites' else '' }}">즐겨찾기</a>{% endif %}
+  </nav>
 </header>
-<div class="container">
+<dialog id="drawer" class="drawer" aria-label="전체 메뉴">
+  <div class="drawer-head">
+    <a class="brand" href="/"><span class="brand-latin">Praha</span><span class="brand-ko">프라하 가족여행</span></a>
+    <button type="button" class="drawer-close" aria-label="메뉴 닫기">✕</button>
+  </div>
+  <nav class="drawer-nav">
+    <a href="/" class="{{ 'active' if active=='home' else '' }}">홈</a>
+    <a href="/journal" class="{{ 'active' if active=='journal' else '' }}">여행일지</a>
+    <a href="/places" class="{{ 'active' if active=='places' else '' }}">장소공유</a>
+    <a href="/transit" class="{{ 'active' if active=='transit' else '' }}">교통정보</a>
+    <a href="/inquiry" class="{{ 'active' if active=='inquiry' else '' }}">문의하기</a>
+    {% if user %}<a href="/favorites" class="{{ 'active' if active=='favorites' else '' }}">즐겨찾기</a>{% endif %}
+  </nav>
+  <div class="drawer-account">
+    {% if user %}
+      <span class="who">{{ user.nickname }}님</span>
+      <a href="/logout">로그아웃</a>
+    {% else %}
+      <a href="/login">로그인</a>
+      <a href="/register" class="btn">회원가입</a>
+    {% endif %}
+  </div>
+</dialog>
+<script>
+(() => {
+  const drawer = document.getElementById('drawer');
+  const toggle = document.querySelector('.menu-toggle');
+  const setOpen = (open) => {
+    toggle.setAttribute('aria-expanded', String(open));
+    if (open) drawer.showModal(); else drawer.close();
+  };
+  toggle.addEventListener('click', () => setOpen(true));
+  drawer.querySelector('.drawer-close').addEventListener('click', () => setOpen(false));
+  // Click on the backdrop (outside the panel) closes it
+  drawer.addEventListener('click', (e) => { if (e.target === drawer) setOpen(false); });
+  drawer.addEventListener('close', () => toggle.setAttribute('aria-expanded', 'false'));
+})();
+</script>
+{% block hero %}{% endblock %}
+<main class="{% block main_class %}container{% endblock %}">
   {% if flash %}
     <div class="flash {{ flash_type or 'ok' }}">{{ flash }}</div>
   {% endif %}
   {% block content %}{% endblock %}
-</div>
-<footer>© 2026 프라하 가족여행 가이드 · 문의: pers1052@gmail.com</footer>
+</main>
+<footer class="site-footer">
+  <div class="inner">
+    <span>© 2026 프라하 가족여행 가이드</span>
+    <span>문의 <a href="mailto:pers1052@gmail.com">pers1052@gmail.com</a></span>
+  </div>
+</footer>
 </body>
 </html>

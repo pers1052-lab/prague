@@ -1,17 +1,22 @@
-from starlette.responses import RedirectResponse
 from starlette.routing import Route
 
+from . import journal_data as data
+from .auth_router import get_current_user
+from .templating import templates
 
-async def journal_redirect(request):
-    # The full journal was originally a single self-contained ~70MB HTML file
-    # (base64-embedded photos/videos). Rather than re-engineering that whole
-    # photo pipeline into DB rows right now, it's served as-is as a static
-    # page so nothing already built is lost; it can be migrated to real rows
-    # (Photo/Day tables) in a later pass if you want per-photo editing in the
-    # admin UI.
-    return RedirectResponse(url="/static/journal/index.html")
+
+async def journal(request):
+    return templates.TemplateResponse(request, "journal.html", {
+        "active": "journal",
+        "user": get_current_user(request),
+        "days": data.DAYS,
+        "trip_end": data.TRIP_END,
+        "album_tabs": data.ALBUM_TABS,
+        "album": data.ALBUM,
+        "gallery": data.GALLERY,
+    })
 
 
 routes = [
-    Route("/journal", journal_redirect),
+    Route("/journal", journal),
 ]

@@ -4,3 +4,4 @@ __pycache__/
 data/app.db
 app/static/uploads/places/*
 !app/static/uploads/places/.gitkeep
+venv/

@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}우리 가족, 프라하 — 9박 10일 여행일기{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/journal.css">{% endblock %}
+{% block main_class %}journal{% endblock %}
+{% block content %}
+<section class="j-hero">
+  <div class="wrap">
+    <div class="j-hero-eyebrow">A Quiet Family Archive</div>
+    <h1>프라하에서 보낸,<br><i>고요하고 다정한</i><br>9박 10일</h1>
+    <p>아빠, 엄마, 첫째딸, 둘째딸.<br>요란하지 않게, 있는 그대로 담은<br>여행일기입니다.</p>
+    <div class="trip-meta">
+      <div class="tm"><div class="tm-label">여행 기간</div><div class="tm-value">2026.07.27 – 08.05</div></div>
+      <div class="tm"><div class="tm-label">인원</div><div class="tm-value">가족 4인</div></div>
+      <div class="tm"><div class="tm-label">기록 완료</div><div class="tm-value">Day 1 – Day 10</div></div>
+    </div>
+  </div>
+</section>
+
+<nav class="day-pills" id="dayPills" aria-label="날짜별 이동">
+  {% for day in days %}<a class="pill" href="#day{{ day.num }}">{{ day.pill }}</a>{% endfor %}
+  <a class="pill" href="#album">가족 앨범</a>
+</nav>
+
+{% for day in days %}
+<section class="day" id="day{{ day.num }}">
+  <div class="wrap">
+    <div class="day-head">
+      <span class="kicker">DAY {{ '%02d' % day.num }}</span>
+      <h2>{{ day.title }}</h2>
+      <div class="date">{{ day.date }}</div>
+    </div>
+    <p class="day-intro">{{ day.intro | safe }}</p>
+    <div class="day-pullquote">{{ day.quote }}</div>
+
+    {% for b in day.blocks %}
+    {% if b.type == 'segment' %}
+    <div class="segment">
+      <div class="seg-head"><h3>{{ b.title }}</h3><span class="seg-time">{{ b.time }}</span></div>
+      <button type="button" class="landmark-frame" data-gallery="{{ b.gallery }}" data-title="{{ b.gallery_title }}">
+        <img src="{{ b.hero }}" alt="{{ b.hero_alt }}" loading="lazy">
+        <span class="zoom-hint">🔍 관련 사진 더보기</span>
+      </button>
+      <div class="landmark-cap">{{ b.hero_cap }}</div>
+      <div class="family-row">
+        {% for p in b.photos %}
+        <figure class="polaroid"><img src="{{ p.src }}" alt="{{ p.cap }}" loading="lazy"><figcaption class="cap">{{ p.cap }}</figcaption>{% if p.who %}<div class="who">{{ p.who }}</div>{% endif %}</figure>
+        {% endfor %}
+      </div>
+      {% if b.note %}<p class="seg-note">{{ b.note }}</p>{% endif %}
+      <div class="map-block">
+        <div class="map-label">📍 {{ b.map_label }}</div>
+        <iframe loading="lazy" title="{{ b.map_label }} 지도" src="https://www.google.com/maps/embed/v1/place?key={{ maps_key }}&q={{ b.map_q }}&zoom={{ b.map_zoom }}"></iframe>
+      </div>
+    </div>
+    {% else %}
+    <div class="clip-block">
+      <div class="clip-frame">
+        <span class="clip-tag">{{ b.tag }}</span>
+        <video class="scroll-video" src="{{ b.src }}" muted loop playsinline preload="metadata"></video>
+        <div class="cap">{{ b.cap }}</div>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endfor %}
+
+<section id="tripend">
+  <div class="ending-card">
+    <img src="{{ trip_end.img }}" alt="{{ trip_end.alt }}" loading="lazy">
+    <div class="ending-text">
+      <span class="ending-eyebrow">{{ trip_end.eyebrow }}</span>
+      <h2>{{ trip_end.title }}</h2>
+      <p>{{ trip_end.text | safe }}</p>
+    </div>
+  </div>
+</section>
+
+<section id="album">
+  <div class="wrap">
+    <span class="kicker">Photo Album</span>
+    <h2>가족 앨범</h2>
+    <p class="section-lead">장소별로 자세히 모아보는 기능이에요. 위 본문에서 이미 보여드린 사진과는 다른, 새로운 컷들로만 채웠어요.</p>
+    <div class="album-tabs">
+      {% for key, label in album_tabs %}
+      <button class="album-tab{{ ' active' if loop.first else '' }}" data-p="{{ key }}">{{ label }}</button>
+      {% endfor %}
+    </div>
+    <div class="album-note">근교 여행지는 드레스덴 · 체스키 크룸로프 · 흘루보카 성으로, 마지막 날 동선은 비노흐라디 · 국립 박물관 · 리흐로비 공원 · 공항으로 각각 나눠뒀어요.</div>
+    <div class="album-grid" id="albumGrid">
+      {% for a in album %}
+      <figure class="polaroid" data-person="{{ a.place }}"><img src="{{ a.src }}" alt="{{ a.cap }}" loading="lazy"><figcaption class="cap">{{ a.cap }}</figcaption></figure>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-inner">
+      <div class="contact-card">
+        <span class="kicker">직접 문의하기 · Direct Inquiry</span>
+        <p>여행 기록에 대한 궁금한 점이나 실제 여행 준비 관련 문의는 이메일로 남겨주세요. 확인하는 대로 직접 답변드릴게요.</p>
+        <a class="btn" href="mailto:pers1052@gmail.com?subject=%5B%ED%94%84%EB%9D%BC%ED%95%98%20%EC%97%AC%ED%96%89%20%EB%AC%B8%EC%9D%98%5D&body=%EC%95%88%EB%85%95%ED%95%98%EC%84%B8%EC%9A%94%2C%20%EC%97%AC%ED%96%89%20%EA%B8%B0%EB%A1%9D%EC%9D%84%20%EB%B3%B4%EA%B3%A0%20%EB%AC%B8%EC%9D%98%EB%93%9C%EB%A6%BD%EB%8B%88%EB%8B%A4.%0A%0A%5B%EB%AC%B8%EC%9D%98%20%EB%82%B4%EC%9A%A9%EC%9D%84%20%EC%A0%81%EC%96%B4%EC%A3%BC%EC%84%B8%EC%9A%94%5D">✉ pers1052@gmail.com 으로 문의하기</a>
+        <p class="contact-note">카카오톡 채널 연결은 준비 중이에요 — 곧 이 자리에 추가될 예정입니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="closing">
+  <div class="wrap">
+    <div class="closing-inner">
+      <span class="kicker">A Note</span>
+      <p>프라하는 도보만으로도 충분한 도시입니다. 구시가지와 성 지구, 까를교가 걸어서 이어지고, 트램 한 번이면 나머지 구역도 금세 닿습니다. 이 가족의 동선처럼 초반에는 시내를 천천히 걷고, 중반에 드레스덴·체스키 크룸로프·흘루보카 같은 근교 도시를 하루씩 다녀오고, 마지막 며칠은 다시 프라하로 돌아와 마무리하는 흐름은 체력 안배 면에서도 이상적인 구성입니다.</p>
+      <p>무엇보다 이 기록이 좋은 이유는 사진을 아무렇게나 모아둔 것이 아니라, 날짜와 장소를 따라 그날의 흐름이 그대로 재현된다는 점입니다. 좋은 여행기는 화려한 장소보다 그 장소를 걸었던 사람들의 표정과 순간을 남기는 법인데, 이 기록은 그 두 가지를 모두 놓치지 않았습니다.</p>
+      <p class="closing-sign">— 9박 10일의 여정을 함께 정리하며</p>
+      <p class="journal-foot">Prague Family Journal · 아빠·엄마·첫째딸·둘째딸의 9박 10일 기록</p>
+    </div>
+  </div>
+</section>
+
+<div id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+  <div class="lb-inner">
+    <div class="lb-head">
+      <h4 id="lbTitle">관련 사진</h4>
+      <button class="lb-close" onclick="closeGallery()" aria-label="닫기">✕</button>
+    </div>
+    <div class="lb-grid" id="lbGrid"></div>
+    <div class="lb-note">같은 구간에서 찍힌 사진을 모아 보여드려요.</div>
+  </div>
+</div>
+
+<script>const GALLERY = {{ gallery | tojson }};</script>
+<script src="/static/js/journal.js"></script>
+{% endblock %}

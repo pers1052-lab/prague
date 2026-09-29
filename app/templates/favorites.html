@@ -1,28 +1,15 @@
 {% extends "base.html" %}
 {% block title %}즐겨찾기{% endblock %}
 {% block content %}
-<div class="card">
+<div class="page-head">
   <h1>내 즐겨찾기</h1>
   <p class="subtitle">저장해둔 장소 목록입니다.</p>
 </div>
 {% if places %}
 <div class="grid">
-  {% for item in places %}
-  <a class="place-card" href="/places/{{ item.place.id }}">
-    {% if item.place.photo_path %}
-      <img src="{{ item.place.photo_path }}" alt="{{ item.place.name }}">
-    {% else %}
-      <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='160'%3E%3Crect width='100%25' height='100%25' fill='%23e8e0d3'/%3E%3C/svg%3E" alt="">
-    {% endif %}
-    <div class="body">
-      <span class="cat">{{ item.place.category }}</span>
-      <h3>{{ item.place.name }}</h3>
-      {% if item.avg_rating %}<div class="rating">★ {{ item.avg_rating }} ({{ item.review_count }})</div>{% endif %}
-    </div>
-  </a>
-  {% endfor %}
+  {% for item in places %}{% include "_place_card.html" %}{% endfor %}
 </div>
 {% else %}
-<div class="card">즐겨찾기한 장소가 없습니다. <a href="/places">장소 둘러보기</a></div>
+<div class="panel">즐겨찾기한 장소가 없습니다. <a href="/places">장소 둘러보기</a></div>
 {% endif %}
 {% endblock %}

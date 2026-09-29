@@ -1,0 +1,14 @@
+<a class="place-card" href="/places/{{ item.place.id }}">
+  <div class="thumb{{ '' if item.place.photo_path else ' empty' }}">
+    {% if item.place.photo_path %}<img src="{{ item.place.photo_path }}" alt="{{ item.place.name }}" loading="lazy">{% else %}{{ item.place.name[:1] }}{% endif %}
+  </div>
+  <div class="body">
+    <span class="cat">{{ item.place.category }}</span>
+    <h3>{{ item.place.name }}</h3>
+    {% if item.avg_rating %}
+      <div class="rating">★ {{ item.avg_rating }} <span class="muted">({{ item.review_count }})</span></div>
+    {% else %}
+      <div class="rating none">아직 리뷰 없음</div>
+    {% endif %}
+  </div>
+</a>

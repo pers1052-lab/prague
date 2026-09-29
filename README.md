@@ -17,7 +17,7 @@ cd prague-app
 python3 -m venv venv && source venv/bin/activate   # 선택 사항
 pip install -r requirements.txt
 cp .env.example .env   # 값 채우기 (SMTP 등)
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --reload-dir app --env-file .env --port 8000
 ```
 
 브라우저에서 http://localhost:8000 접속.
@@ -26,7 +26,7 @@ uvicorn app.main:app --reload --port 8000
 
 | 기능 | 경로 |
 |---|---|
-| 여행일지 | `/journal` (기존에 완성한 사진/영상 아카이브를 그대로 서빙) |
+| 여행일지 | `/journal` (`app/journal_data.py` 데이터 + `templates/journal.html`, 사진·영상은 `static/journal/media/`) |
 | 회원가입 / 로그인 | `/register`, `/login` |
 | 장소공유 목록 / 등록 / 상세 | `/places`, `/places/new`, `/places/{id}` |
 | 리뷰/평점 | 장소 상세 페이지 내 |

@@ -6,6 +6,7 @@ from starlette.routing import Route, Mount
 from starlette.staticfiles import StaticFiles
 
 from . import db as dbmod
+from . import seed_places
 from .templating import templates
 from .auth_router import get_current_user, routes as auth_routes
 from .journal_router import routes as journal_routes
@@ -24,6 +25,7 @@ async def home(request):
 @contextlib.asynccontextmanager
 async def lifespan(app):
     dbmod.init_db()
+    seed_places.seed()
     yield
 
 

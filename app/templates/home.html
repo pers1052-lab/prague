@@ -1,27 +1,60 @@
 {% extends "base.html" %}
 {% block title %}프라하 가족여행 가이드{% endblock %}
+{% block hero %}
+<section class="hero">
+  <div class="hero-inner">
+    <div class="dates">2026.07.27 – 08.05 · 9박 10일</div>
+    <h1>프라하, 가족이 함께 걸은 열흘</h1>
+    <p>아빠, 엄마, 두 딸이 다녀온 여행 기록과 프라하에서 바로 쓸 수 있는 장소·교통 정보를 한곳에 모았습니다.</p>
+    <div class="actions">
+      <a class="btn" href="/journal">여행일지 보기</a>
+      <a class="btn ghost" href="/places">추천 장소 둘러보기</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
 {% block content %}
-<div class="card">
-  <h1>프라하 가족여행 가이드</h1>
-  <p class="subtitle">2026.07.27 – 08.05, 9박 10일 가족여행 기록과 프라하 여행 정보를 함께 나눕니다.</p>
-  <div style="display:flex; gap:12px; flex-wrap:wrap;">
-    <a class="btn" href="/journal">여행일지 보기</a>
-    <a class="btn secondary" href="/places">다른 장소 둘러보기</a>
-    <a class="btn secondary" href="/transit">교통정보 보기</a>
-  </div>
-</div>
-<div class="grid">
-  <div class="card">
-    <h2>여행일지</h2>
+<section class="route" aria-labelledby="route-title">
+  <h2 class="section-title" id="route-title">10일간의 동선</h2>
+  <ol class="route-line">
+    {% for day, name, away in [
+      (1, '인천 → 프라하', false),
+      (2, '구시가지', false),
+      (3, '까를교', false),
+      (4, '프라하 성 · 야경', false),
+      (5, '블타바 강 크루즈', false),
+      (6, '드레스덴', true),
+      (7, '체스키 크룸로프', true),
+      (8, '흘루보카 성', true),
+      (9, '국립 박물관', false),
+      (10, '안녕, 프라하', false),
+    ] %}
+    <li class="{{ 'away' if away else '' }}">
+      <a href="/journal#day{{ day }}">
+        <span class="stop-dot"></span>
+        <span><span class="stop-day">Day {{ day }}</span><span class="stop-name">{{ name }}</span></span>
+      </a>
+    </li>
+    {% endfor %}
+  </ol>
+  <div class="route-legend"><span>프라하 시내</span><span class="away">근교 당일·1박 여행</span></div>
+</section>
+
+<section class="services">
+  <div class="service">
+    <h3>여행일지</h3>
     <p>가족이 직접 다녀온 9박 10일 프라하 여행 기록. 날짜별 사진, 영상, 지도로 정리했습니다.</p>
+    <a class="more" href="/journal">일지 읽기</a>
   </div>
-  <div class="card">
-    <h2>장소공유</h2>
+  <div class="service">
+    <h3>장소공유</h3>
     <p>다른 여행자들이 추천하는 프라하의 맛집, 카페, 명소를 지도와 함께 확인하고, 직접 등록할 수 있습니다.</p>
+    <a class="more" href="/places">장소 둘러보기</a>
   </div>
-  <div class="card">
-    <h2>교통정보</h2>
+  <div class="service">
+    <h3>교통정보</h3>
     <p>프라하 트램·지하철·티켓 구매 방법 안내.</p>
+    <a class="more" href="/transit">교통정보 보기</a>
   </div>
-</div>
+</section>
 {% endblock %}
