@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}프라하 가족여행 가이드{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>프라하 가족여행 가이드</h1>
+  <p class="subtitle">2026.07.27 – 08.05, 9박 10일 가족여행 기록과 프라하 여행 정보를 함께 나눕니다.</p>
+  <div style="display:flex; gap:12px; flex-wrap:wrap;">
+    <a class="btn" href="/journal">여행일지 보기</a>
+    <a class="btn secondary" href="/places">다른 장소 둘러보기</a>
+    <a class="btn secondary" href="/transit">교통정보 보기</a>
+  </div>
+</div>
+<div class="grid">
+  <div class="card">
+    <h2>여행일지</h2>
+    <p>가족이 직접 다녀온 9박 10일 프라하 여행 기록. 날짜별 사진, 영상, 지도로 정리했습니다.</p>
+  </div>
+  <div class="card">
+    <h2>장소공유</h2>
+    <p>다른 여행자들이 추천하는 프라하의 맛집, 카페, 명소를 지도와 함께 확인하고, 직접 등록할 수 있습니다.</p>
+  </div>
+  <div class="card">
+    <h2>교통정보</h2>
+    <p>프라하 트램·지하철·티켓 구매 방법 안내.</p>
+  </div>
+</div>
+{% endblock %}

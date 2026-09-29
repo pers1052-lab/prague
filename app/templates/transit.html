@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}교통정보{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>프라하 대중교통 안내</h1>
+  <p class="subtitle">트램, 지하철, 버스가 하나의 티켓으로 통합 운영됩니다.</p>
+</div>
+
+<div class="card">
+  <h2>티켓 종류</h2>
+  <table class="transit">
+    <tr><th>종류</th><th>유효시간</th><th>참고</th></tr>
+    <tr><td>단기권 (30분)</td><td>30분</td><td>환승 없이 짧은 구간 이동 시</td></tr>
+    <tr><td>기본권 (90분)</td><td>90분</td><td>환승 포함, 가장 일반적으로 사용</td></tr>
+    <tr><td>1일권</td><td>24시간</td><td>하루 여러 번 이동 시 유리</td></tr>
+    <tr><td>3일권</td><td>72시간</td><td>장기 체류 여행자에게 추천</td></tr>
+  </table>
+  <p style="margin-top:12px; font-size:0.9rem; color:var(--ink-soft);">티켓은 정류장 자동판매기, PID Lítačka 앱, 편의점(Trafika)에서 구매 가능합니다. 탑승 후 노란색 펀칭기에 반드시 개시(validate)해야 합니다.</p>
+</div>
+
+<div class="card">
+  <h2>주요 노선</h2>
+  <ul>
+    <li><strong>트램 22번</strong>: 프라하성 방향 관광객이 가장 많이 이용하는 노선</li>
+    <li><strong>지하철 A선(녹색)</strong>: 구시가지, 말라스트라나 방면</li>
+    <li><strong>지하철 B선(노란색)</strong>: 중앙역, 나로드니 지구 방면</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>이용 팁</h2>
+  <ul>
+    <li>공항에서 시내까지는 119번 버스 + 지하철 A선 조합이 저렴하고 빠릅니다.</li>
+    <li>야간에는 노선번호 5xx대 나이트 트램이 운행됩니다.</li>
+    <li>PID Lítačka 공식 앱에서 실시간 노선과 티켓 구매가 모두 가능합니다.</li>
+  </ul>
+</div>
+{% endblock %}

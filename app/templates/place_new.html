@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}장소 등록{% endblock %}
+{% block content %}
+<div class="card" style="max-width:520px;">
+  <h1>새 장소 등록</h1>
+  <form class="stack" method="post" action="/places/new" enctype="multipart/form-data">
+    <div>
+      <label>장소 이름</label>
+      <input type="text" name="name" required maxlength="80">
+    </div>
+    <div>
+      <label>카테고리</label>
+      <select name="category">
+        {% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+      </select>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <div style="flex:1;">
+        <label>위도 (latitude)</label>
+        <input type="text" name="lat" required placeholder="예: 50.0875">
+      </div>
+      <div style="flex:1;">
+        <label>경도 (longitude)</label>
+        <input type="text" name="lng" required placeholder="예: 14.4213">
+      </div>
+    </div>
+    <p style="font-size:0.85rem; color:var(--ink-soft); margin:-6px 0 0;">구글맵에서 장소를 검색 후 우클릭하면 좌표를 복사할 수 있습니다.</p>
+    <div>
+      <label>설명</label>
+      <textarea name="description" placeholder="추천 이유, 팁 등을 적어주세요"></textarea>
+    </div>
+    <div>
+      <label>사진 (선택)</label>
+      <input type="file" name="photo" accept="image/*">
+    </div>
+    <button class="btn" type="submit">등록하기</button>
+  </form>
+</div>
+{% endblock %}

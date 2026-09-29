@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}장소공유{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>프라하 장소공유</h1>
+  <p class="subtitle">여행자들이 추천하는 프라하의 맛집, 카페, 명소, 숙소를 모아봅니다.</p>
+  <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+    <a class="btn secondary" href="/places" style="{{ 'font-weight:700;' if not selected_category else '' }}">전체</a>
+    {% for c in categories %}
+      <a class="btn secondary" href="/places?category={{ c }}" style="{{ 'font-weight:700;' if selected_category==c else '' }}">{{ c }}</a>
+    {% endfor %}
+    {% if user %}
+      <a class="btn" href="/places/new" style="margin-left:auto;">+ 장소 등록</a>
+    {% endif %}
+  </div>
+</div>
+
+{% if places %}
+<div class="grid">
+  {% for item in places %}
+  <a class="place-card" href="/places/{{ item.place.id }}">
+    {% if item.place.photo_path %}
+      <img src="{{ item.place.photo_path }}" alt="{{ item.place.name }}">
+    {% else %}
+      <img src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='160'%3E%3Crect width='100%25' height='100%25' fill='%23e8e0d3'/%3E%3C/svg%3E" alt="">
+    {% endif %}
+    <div class="body">
+      <span class="cat">{{ item.place.category }}</span>
+      <h3>{{ item.place.name }}</h3>
+      {% if item.avg_rating %}
+        <div class="rating">★ {{ item.avg_rating }} ({{ item.review_count }})</div>
+      {% else %}
+        <div class="rating" style="color:var(--ink-soft);">아직 리뷰 없음</div>
+      {% endif %}
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card">등록된 장소가 아직 없습니다. 첫 장소를 등록해보세요!</div>
+{% endif %}
+{% endblock %}
