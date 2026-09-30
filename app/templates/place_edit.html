@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}장소 수정 · {{ place.name }}{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+<script src="/static/js/location-picker.js" defer></script>
+{% endblock %}
+{% block content %}
+<div class="narrow">
+  <p class="small"><a href="/places/{{ place.id }}">장소로 돌아가기</a></p>
+  <div class="page-head">
+    <h1>장소 수정</h1>
+  </div>
+  <div class="panel">
+    <form class="stack" method="post" action="/places/{{ place.id }}/edit">
+      <div>
+        <label for="name">장소 이름</label>
+        <input id="name" type="text" name="name" required maxlength="80" value="{{ place.name }}">
+      </div>
+      <div>
+        <label for="category">카테고리</label>
+        <select id="category" name="category">
+          {% for c in categories %}<option value="{{ c }}" {{ 'selected' if place.category == c else '' }}>{{ c }}</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="description">설명</label>
+        <textarea id="description" name="description">{{ place.description or '' }}</textarea>
+      </div>
+      {% set lat, lng = place.lat, place.lng %}
+      {% include "_location_picker.html" %}
+      <div class="actions">
+        <button class="btn" type="submit">저장</button>
+        <a class="btn secondary" href="/places/{{ place.id }}">취소</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

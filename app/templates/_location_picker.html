@@ -1,0 +1,13 @@
+{# 장소 검색 + 지도 클릭으로 위치 지정. 사용하는 페이지는 head 블록에 Leaflet CSS/JS 를 넣어야 합니다. #}
+<div class="picker">
+  <label for="picker-q">위치 지정</label>
+  <div class="picker-search">
+    <input id="picker-q" type="search" placeholder="장소 이름이나 주소 검색 (예: 까를교, Karlův most)" autocomplete="off">
+    <button type="button" class="btn secondary" id="picker-go">검색</button>
+  </div>
+  <ul class="picker-results" id="picker-results" hidden></ul>
+  <div class="picker-map" id="picker-map" role="application" aria-label="위치 선택 지도. 지도를 눌러 위치를 표시하세요."></div>
+  <p class="hint" id="picker-coords">{{ '선택한 위치: %s, %s' % (lat, lng) if lat else '검색 결과를 고르거나 지도를 눌러 위치를 표시하세요. 핀은 끌어서 옮길 수 있어요.' }}</p>
+  <input type="hidden" name="lat" id="lat" value="{{ lat or '' }}">
+  <input type="hidden" name="lng" id="lng" value="{{ lng or '' }}">
+</div>

@@ -1,4 +1,4 @@
-"""여행일지 [가족 앨범]의 장소들을 [장소공유] 목록에 등록합니다 (앱 시작 시 1회, 이미 있으면 건너뜀)."""
+"""여행일지 [가족 앨범]의 장소들을 [장소공유] 목록에 등록합니다 (처음 한 번만; 이후 관리자가 수정/삭제한 내용은 유지)."""
 import secrets
 
 from . import db as dbmod
@@ -54,17 +54,16 @@ def seed():
     conn = dbmod.get_conn()
     user = conn.execute("SELECT id FROM users WHERE email=?", (FAMILY_EMAIL,)).fetchone()
     if user:
-        uid = user["id"]
-    else:
-        # Owner account for the seeded places; the random hash means nobody can log in as it.
-        uid = conn.execute(
-            "INSERT INTO users (email, password_hash, salt, nickname, created_at) VALUES (?, ?, ?, ?, ?)",
-            (FAMILY_EMAIL, secrets.token_hex(32), secrets.token_hex(16), FAMILY_NICKNAME, dbmod.now()),
-        ).lastrowid
+        # Already seeded once; places deleted or edited by the admin must stay that way.
+        conn.close()
+        return
+    # Owner account for the seeded places; the random hash means nobody can log in as it.
+    uid = conn.execute(
+        "INSERT INTO users (email, password_hash, salt, nickname, created_at) VALUES (?, ?, ?, ?, ?)",
+        (FAMILY_EMAIL, secrets.token_hex(32), secrets.token_hex(16), FAMILY_NICKNAME, dbmod.now()),
+    ).lastrowid
 
     for key, name, category, lat, lng, desc in PLACES:
-        if conn.execute("SELECT 1 FROM places WHERE user_id=? AND name=?", (uid, name)).fetchone():
-            continue
         conn.execute(
             """INSERT INTO places (user_id, name, category, lat, lng, description, photo_path, created_at)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",

@@ -1,4 +1,6 @@
-<a class="place-card" href="/places/{{ item.place.id }}">
+{% import "_admin_icons.html" as admin %}
+<div class="place-item">
+<a class="place-card" href="/places/{{ item.place.id }}{{ detail_qs }}">
   <div class="thumb{{ '' if item.place.photo_path else ' empty' }}">
     {% if item.place.photo_path %}<img src="{{ item.place.photo_path }}" alt="{{ item.place.name }}" loading="lazy">{% else %}{{ item.place.name[:1] }}{% endif %}
   </div>
@@ -12,3 +14,10 @@
     {% endif %}
   </div>
 </a>
+  {% if is_admin(user) %}
+  <div class="admin-actions on-card">
+    {{ admin.edit('/places/%d/edit' % item.place.id, '장소 수정') }}
+    {{ admin.delete('/places/%d/delete' % item.place.id, '장소 삭제', '이 장소와 리뷰를 모두 삭제할까요? 되돌릴 수 없어요.') }}
+  </div>
+  {% endif %}
+</div>

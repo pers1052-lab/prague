@@ -13,6 +13,7 @@ from .journal_router import routes as journal_routes
 from .places_router import routes as places_routes
 from .inquiry_router import routes as inquiry_routes
 from .transit_router import routes as transit_routes
+from .admin_router import routes as admin_routes
 
 STATIC_DIR = pathlib.Path(__file__).resolve().parent / "static"
 
@@ -36,6 +37,7 @@ routes = [
     *places_routes,
     *inquiry_routes,
     *transit_routes,
+    *admin_routes,
     Mount("/static", app=StaticFiles(directory=str(STATIC_DIR)), name="static"),
 ]
 

@@ -41,6 +41,7 @@
     <a href="/transit" class="{{ 'active' if active=='transit' else '' }}">교통정보</a>
     <a href="/inquiry" class="{{ 'active' if active=='inquiry' else '' }}">문의하기</a>
     {% if user %}<a href="/favorites" class="{{ 'active' if active=='favorites' else '' }}">즐겨찾기</a>{% endif %}
+    {% if is_admin(user) %}<a href="/admin" class="{{ 'active' if active=='admin' else '' }}">관리자 · 문의 내역</a>{% endif %}
   </nav>
   <div class="drawer-account">
     {% if user %}

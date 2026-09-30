@@ -7,3 +7,7 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 # Google Maps embed key: set GOOGLE_MAPS_KEY in .env (never commit the key itself)
 templates.env.globals["maps_key"] = os.environ.get("GOOGLE_MAPS_KEY", "")
+
+from .auth import is_admin  # noqa: E402
+
+templates.env.globals["is_admin"] = is_admin

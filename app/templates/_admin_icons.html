@@ -1,0 +1,14 @@
+{# 관리자용 수정/삭제 아이콘. 사용: {% import "_admin_icons.html" as admin %} #}
+{% macro edit(href, label="수정") %}
+<a class="icon-btn" href="{{ href }}" title="{{ label }}" aria-label="{{ label }}">
+  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-4-4L4 16v4zM13.5 6.5l4 4"/></svg>
+</a>
+{% endmacro %}
+
+{% macro delete(action, label="삭제", confirm_msg="삭제할까요? 되돌릴 수 없어요.") %}
+<form method="post" action="{{ action }}" class="icon-form" onsubmit="return confirm('{{ confirm_msg }}')">
+  <button type="submit" class="icon-btn danger" title="{{ label }}" aria-label="{{ label }}">
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M10 11v6M14 11v6M5 7l1 13h12l1-13M9 7V4h6v3"/></svg>
+  </button>
+</form>
+{% endmacro %}

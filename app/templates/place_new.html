@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% block title %}장소 등록{% endblock %}
+{% block head %}
+{% if need_location %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+<script src="/static/js/location-picker.js" defer></script>
+{% endif %}
+{% endblock %}
 {% block content %}
+{% set v = values or {} %}
 <div class="narrow">
   <div class="page-head">
     <h1>새 장소 등록</h1>
@@ -10,33 +18,35 @@
     <form class="stack" method="post" action="/places/new" enctype="multipart/form-data">
       <div>
         <label for="name">장소 이름</label>
-        <input id="name" type="text" name="name" required maxlength="80">
+        <input id="name" type="text" name="name" required maxlength="80" value="{{ v.name or '' }}">
       </div>
       <div>
         <label for="category">카테고리</label>
         <select id="category" name="category">
-          {% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+          {% for c in categories %}<option value="{{ c }}" {{ 'selected' if v.category == c else '' }}>{{ c }}</option>{% endfor %}
         </select>
       </div>
-      <div class="row-2">
-        <div>
-          <label for="lat">위도 (latitude)</label>
-          <input id="lat" type="text" name="lat" required placeholder="예: 50.0875">
-        </div>
-        <div>
-          <label for="lng">경도 (longitude)</label>
-          <input id="lng" type="text" name="lng" required placeholder="예: 14.4213">
-        </div>
-      </div>
-      <p class="hint">구글맵에서 장소를 검색 후 우클릭하면 좌표를 복사할 수 있습니다.</p>
       <div>
         <label for="description">설명</label>
-        <textarea id="description" name="description" placeholder="추천 이유, 팁 등을 적어주세요"></textarea>
+        <textarea id="description" name="description" placeholder="추천 이유, 팁 등을 적어주세요">{{ v.description or '' }}</textarea>
       </div>
+      {% if photo_token %}
       <div>
-        <label for="photo">사진 (선택)</label>
-        <input id="photo" type="file" name="photo" accept="image/*">
+        <label>사진</label>
+        <img class="pending-photo" src="/static/uploads/places/{{ photo_token }}" alt="올린 사진">
+        <input type="hidden" name="photo_token" value="{{ photo_token }}">
       </div>
+      {% else %}
+      <div>
+        <label for="photo">사진</label>
+        <input id="photo" type="file" name="photo" accept="image/jpeg" required>
+      </div>
+      <p class="hint">장소 위치는 사진에 저장된 위치 정보(GPS)로 자동 등록됩니다. 위치 정보가 없으면 다음 단계에서 지도로 표시할 수 있어요.</p>
+      {% endif %}
+      {% if need_location %}
+        {% set lat, lng = v.lat, v.lng %}
+        {% include "_location_picker.html" %}
+      {% endif %}
       <button class="btn" type="submit">등록하기</button>
     </form>
   </div>

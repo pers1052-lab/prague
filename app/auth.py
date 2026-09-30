@@ -35,3 +35,11 @@ def read_session_cookie(token: str, max_age: int = 60 * 60 * 24 * 14):
         return data.get("user_id")
     except BadSignature:
         return None
+
+
+# The site owner's account; it sees the admin page and gets edit/delete controls.
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "pers1052@gmail.com")
+
+
+def is_admin(user) -> bool:
+    return bool(user) and user["email"].lower() == ADMIN_EMAIL.lower()

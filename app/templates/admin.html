@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% import "_admin_icons.html" as admin %}
+{% block title %}관리자 · 문의 내역{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>관리자</h1>
+  <p class="subtitle">[문의하기]로 들어온 내용입니다. 최신순으로 보여요.</p>
+</div>
+
+<div class="panel">
+  <h2>문의 {{ inquiries | length }}건</h2>
+  {% if inquiries %}
+  <ul class="inquiries">
+    {% for q in inquiries %}
+    <li class="inquiry">
+      <div class="inquiry-head">
+        <div>
+          <strong>{{ q.name }}</strong>
+          <a href="mailto:{{ q.email }}?subject={{ '[프라하 가족여행] 문의 답변' | urlencode }}">{{ q.email }}</a>
+        </div>
+        <div class="inquiry-meta">
+          <span class="muted small">{{ q.created_at[:16] | replace('T', ' ') }}</span>
+          <span class="tag {{ 'ok' if q.email_sent else '' }}">{{ '메일 발송됨' if q.email_sent else '메일 미발송' }}</span>
+          {{ admin.delete('/admin/inquiries/%d/delete' % q.id, '문의 삭제', '이 문의를 삭제할까요? 되돌릴 수 없어요.') }}
+        </div>
+      </div>
+      <p class="inquiry-body">{{ q.message }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">아직 들어온 문의가 없습니다.</p>
+  {% endif %}
+</div>
+
+<p class="small muted">장소와 리뷰는 [장소공유] 화면에서 각 항목의 연필(수정)·휴지통(삭제) 아이콘으로 관리할 수 있어요.</p>
+{% endblock %}

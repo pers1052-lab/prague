@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}장소공유{% endblock %}
 {% block content %}
+{% set detail_qs = ('?category=' ~ (selected_category | urlencode)) if selected_category in categories else '' %}
 <div class="page-head">
   <h1>프라하 장소공유</h1>
   <p class="subtitle">여행자들이 추천하는 프라하의 맛집, 카페, 명소, 숙소를 모아봅니다.</p>

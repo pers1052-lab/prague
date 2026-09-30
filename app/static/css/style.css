@@ -279,3 +279,41 @@ footer.site-footer { background: var(--slate); color: rgba(255,255,255,.7); font
 footer.site-footer .inner { max-width: 1120px; margin: 0 auto; padding: 32px 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
 footer.site-footer a { color: #fff; }
 
+
+/* ---------- admin controls ---------- */
+.admin-actions { display: flex; gap: 6px; align-items: center; }
+.icon-form { display: inline; margin: 0; }
+.icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--white); color: var(--slate); cursor: pointer; padding: 0; }
+.icon-btn:hover { border-color: var(--slate); background: var(--fog); text-decoration: none; }
+.icon-btn.danger { color: var(--red-dark); }
+.icon-btn.danger:hover { border-color: var(--red); background: var(--red-tint); }
+.place-item { position: relative; }
+.admin-actions.on-card { position: absolute; top: 10px; right: 10px; }
+.admin-actions.on-card .icon-btn { box-shadow: 0 2px 8px rgba(0,0,0,.18); }
+.title-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.title-row h1 { margin-bottom: 0; }
+.page-head .title-row { margin-bottom: 10px; }
+.review-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+
+.inquiries { list-style: none; margin: 0; padding: 0; }
+.inquiry { border-top: 1px solid var(--line); padding: 16px 0; }
+.inquiry-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.inquiry-head strong { color: var(--slate); margin-right: 8px; }
+.inquiry-meta { display: flex; gap: 10px; align-items: center; }
+.inquiry-body { margin: 8px 0 0; white-space: pre-wrap; }
+.tag { font-size: 0.78rem; padding: 2px 8px; border-radius: 999px; background: var(--fog); color: var(--ink-soft); border: 1px solid var(--line); }
+.tag.ok { background: #E8F2EC; color: var(--ok); border-color: #CFE3D6; }
+
+/* ---------- location picker ---------- */
+.picker-search { display: flex; gap: 8px; }
+.picker-search input { flex: 1; min-width: 0; }
+form.stack .picker-search .btn { align-self: stretch; }
+.picker-results { list-style: none; margin: 8px 0 0; padding: 0; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--white); max-height: 220px; overflow-y: auto; }
+.picker-results li { border-top: 1px solid var(--line); }
+.picker-results li:first-child { border-top: 0; }
+.picker-results li.muted { padding: 10px 12px; font-size: 0.9rem; }
+.picker-results button { width: 100%; text-align: left; background: none; border: 0; padding: 10px 12px; font: 0.9rem var(--sans); color: var(--ink); cursor: pointer; }
+.picker-results button:hover { background: var(--fog); }
+.picker-map { height: 320px; margin-top: 10px; border-radius: var(--r-md); border: 1px solid var(--line); z-index: 0; }
+.picker .hint { margin: 8px 0 0; }
+.pending-photo { display: block; max-width: 100%; max-height: 260px; border-radius: var(--r-md); }

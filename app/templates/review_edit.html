@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}리뷰 수정{% endblock %}
+{% block content %}
+<div class="narrow">
+  <p class="small"><a href="/places/{{ review.place_id }}">{{ review.place_name }}(으)로 돌아가기</a></p>
+  <div class="page-head">
+    <h1>리뷰 수정</h1>
+    <p class="subtitle">{{ review.nickname }}님의 리뷰 · {{ review.created_at[:10] }}</p>
+  </div>
+  <div class="panel">
+    <form class="stack" method="post" action="/reviews/{{ review.id }}/edit">
+      <div>
+        <label for="rating">평점</label>
+        <select id="rating" name="rating">
+          {% for n in [5, 4, 3, 2, 1] %}<option value="{{ n }}" {{ 'selected' if review.rating == n else '' }}>{{ '★' * n }} ({{ n }})</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="comment">후기</label>
+        <textarea id="comment" name="comment">{{ review.comment or '' }}</textarea>
+      </div>
+      <div class="actions">
+        <button class="btn" type="submit">저장</button>
+        <a class="btn secondary" href="/places/{{ review.place_id }}">취소</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
