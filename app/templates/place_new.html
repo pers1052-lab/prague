@@ -1,12 +1,6 @@
 {% extends "base.html" %}
 {% block title %}장소 등록{% endblock %}
-{% block head %}
-{% if need_location %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
-<script src="/static/js/location-picker.js" defer></script>
-{% endif %}
-{% endblock %}
+{% block head %}{% if need_location %}{% include "_leaflet.html" %}{% endif %}{% endblock %}
 {% block content %}
 {% set v = values or {} %}
 <div class="narrow">

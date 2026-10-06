@@ -1,4 +1,4 @@
-{# 장소 검색 + 지도 클릭으로 위치 지정. 사용하는 페이지는 head 블록에 Leaflet CSS/JS 를 넣어야 합니다. #}
+{# 장소 검색 + 지도 클릭으로 위치 지정. 사용하는 페이지는 head 블록에서 _leaflet.html 을 include 해야 합니다. #}
 <div class="picker">
   <label for="picker-q">위치 지정</label>
   <div class="picker-search">
@@ -11,3 +11,4 @@
   <input type="hidden" name="lat" id="lat" value="{{ lat or '' }}">
   <input type="hidden" name="lng" id="lng" value="{{ lng or '' }}">
 </div>
+<script src="/static/js/location-picker.js" defer></script>

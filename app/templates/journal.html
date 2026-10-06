@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}우리 가족, 프라하 — 9박 10일 여행일기{% endblock %}
-{% block head %}<link rel="stylesheet" href="/static/css/journal.css">{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/journal.css">
+{% include "_leaflet.html" %}{% endblock %}
 {% block main_class %}journal{% endblock %}
 {% block content %}
 <section class="j-hero">
@@ -49,7 +50,8 @@
       {% if b.note %}<p class="seg-note">{{ b.note }}</p>{% endif %}
       <div class="map-block">
         <div class="map-label">📍 {{ b.map_label }}</div>
-        <iframe loading="lazy" title="{{ b.map_label }} 지도" src="https://www.google.com/maps/embed/v1/place?key={{ maps_key }}&q={{ b.map_q }}&zoom={{ b.map_zoom }}"></iframe>
+        {% set lat, lng = b.map_q.split(',') %}
+        <div class="osm-map" role="region" aria-label="{{ b.map_label }} 지도" data-lat="{{ lat }}" data-lng="{{ lng }}" data-zoom="{{ b.map_zoom }}"></div>
       </div>
     </div>
     {% else %}

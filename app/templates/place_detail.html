@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% import "_admin_icons.html" as admin %}
 {% block title %}{{ place.name }}{% endblock %}
+{% block head %}{% include "_leaflet.html" %}{% endblock %}
 {% block content %}
 <p class="small"><a href="{{ back_url }}">목록으로</a></p>
 <div class="page-head">
@@ -33,9 +34,7 @@
 <div class="panel">
   {% if place.photo_path %}<img class="detail-photo" src="{{ place.photo_path }}" alt="{{ place.name }}">{% endif %}
   {% if place.description %}<p>{{ place.description }}</p>{% endif %}
-  <iframe class="map-embed" loading="lazy" title="{{ place.name }} 지도"
-    src="https://www.google.com/maps/embed/v1/place?key={{ maps_key }}&q={{ place.lat }},{{ place.lng }}&zoom=16">
-  </iframe>
+  <div class="osm-map map-embed" role="region" aria-label="{{ place.name }} 지도" data-lat="{{ place.lat }}" data-lng="{{ place.lng }}" data-zoom="16"></div>
 </div>
 
 <div class="panel">

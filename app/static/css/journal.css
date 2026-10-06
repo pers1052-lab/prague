@@ -46,7 +46,7 @@ section.day:nth-of-type(even) { background: var(--white); }
 .seg-time { font-size: 0.82rem; font-weight: 600; color: #fff; background: var(--slate); padding: 2px 10px; border-radius: var(--r-sm); }
 
 .landmark-frame { display: block; width: 100%; position: relative; padding: 0; border: 0; background: none; cursor: pointer; border-radius: var(--r-md); overflow: hidden; }
-.landmark-frame img { width: 100%; height: auto; display: block; transition: transform .5s ease; }
+.landmark-frame img { width: 100%; height: auto; max-height: 78vh; object-fit: cover; display: block; transition: transform .5s ease; }
 .landmark-frame:hover img { transform: scale(1.015); }
 .zoom-hint { position: absolute; right: 14px; bottom: 14px; background: color-mix(in srgb, var(--slate) 85%, transparent); color: #fff; font: 500 0.8rem var(--sans); padding: 6px 12px; border-radius: var(--r-sm); pointer-events: none; }
 .landmark-cap { font-size: 0.88rem; color: var(--ink-soft); margin: 10px 0 26px; }
@@ -62,7 +62,7 @@ section.day:nth-of-type(even) { background: var(--white); }
 .seg-note { font-size: 0.88rem; color: var(--ink-soft); background: var(--white); border-left: 3px solid var(--gilt); padding: 10px 14px; margin: 0 0 20px; }
 section.day:nth-of-type(even) .seg-note { background: var(--fog); }
 .map-label { font-size: 0.88rem; font-weight: 600; color: var(--slate); margin-bottom: 8px; }
-.map-block iframe { width: 100%; height: 270px; border: 0; border-radius: var(--r-md); display: block; }
+.map-block .osm-map { width: 100%; height: 270px; z-index: 0; border-radius: var(--r-md); display: block; }
 
 /* ---------- clips ---------- */
 .clip-block { max-width: 760px; margin: 0 auto 72px; }
@@ -74,7 +74,7 @@ section.day:nth-of-type(even) .seg-note { background: var(--fog); }
 /* ---------- trip end ---------- */
 #tripend { background: var(--slate); color: #fff; padding: 88px 0; }
 .ending-card { max-width: 640px; margin: 0 auto; padding: 0 24px; text-align: center; }
-.ending-card img { width: 100%; height: auto; display: block; border-radius: var(--r-md); }
+.ending-card img { width: 100%; height: auto; max-height: 78vh; object-fit: cover; display: block; border-radius: var(--r-md); }
 .ending-text { padding-top: 36px; }
 .ending-eyebrow { font-family: var(--serif); color: rgba(255,255,255,.7); }
 .ending-text h2 { color: #fff; font-size: clamp(1.8rem, 3.6vw, 2.3rem); margin: 10px 0 0; }

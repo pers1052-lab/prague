@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 {% block title %}장소 수정 · {{ place.name }}{% endblock %}
-{% block head %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
-<script src="/static/js/location-picker.js" defer></script>
-{% endblock %}
+{% block head %}{% include "_leaflet.html" %}{% endblock %}
 {% block content %}
 <div class="narrow">
   <p class="small"><a href="/places/{{ place.id }}">장소로 돌아가기</a></p>
@@ -12,7 +8,7 @@
     <h1>장소 수정</h1>
   </div>
   <div class="panel">
-    <form class="stack" method="post" action="/places/{{ place.id }}/edit">
+    <form class="stack" method="post" action="/places/{{ place.id }}/edit" enctype="multipart/form-data">
       <div>
         <label for="name">장소 이름</label>
         <input id="name" type="text" name="name" required maxlength="80" value="{{ place.name }}">
@@ -27,6 +23,18 @@
         <label for="description">설명</label>
         <textarea id="description" name="description">{{ place.description or '' }}</textarea>
       </div>
+      <div>
+        <label for="photo">사진</label>
+        <img class="pending-photo" id="photo-preview" src="{{ place.photo_path or '' }}" alt="장소 사진"{{ '' if place.photo_path else ' hidden' }}>
+        <input id="photo" type="file" name="photo" accept="image/jpeg" style="margin-top:10px">
+      </div>
+      <p class="hint">새 사진을 고르면 저장할 때 기존 사진이 바뀝니다. 고르지 않으면 지금 사진이 그대로 유지돼요.</p>
+      <script>
+        document.getElementById('photo').addEventListener('change', (e) => {
+          const f = e.target.files[0], img = document.getElementById('photo-preview');
+          if (f) { img.src = URL.createObjectURL(f); img.hidden = false; }
+        });
+      </script>
       {% set lat, lng = place.lat, place.lng %}
       {% include "_location_picker.html" %}
       <div class="actions">

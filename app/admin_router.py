@@ -1,4 +1,7 @@
 """관리자 전용: 문의 내역 보기/삭제, 장소·리뷰 수정/삭제. 모든 핸들러가 서버에서 관리자 여부를 확인합니다."""
+import pathlib
+import uuid
+
 from starlette.responses import PlainTextResponse, RedirectResponse
 from starlette.routing import Route
 
@@ -7,6 +10,13 @@ from .auth import is_admin
 from .auth_router import get_current_user
 from .places_router import CATEGORIES, UPLOAD_DIR, parse_coords
 from .templating import templates
+
+
+def remove_upload(photo_path):
+    # Only user uploads are removed; journal media stays (the journal still uses it)
+    path = photo_path or ""
+    if path.startswith("/static/uploads/places/"):
+        (UPLOAD_DIR / path.rsplit("/", 1)[1]).unlink(missing_ok=True)
 
 
 def require_admin(request):
@@ -65,16 +75,28 @@ async def place_edit(request):
         category = form.get("category") if form.get("category") in CATEGORIES else place["category"]
         description = (form.get("description") or "").strip()
         coords = parse_coords(form) or (place["lat"], place["lng"])
-        if not name:
+        photo = form.get("photo")
+        has_photo = photo is not None and getattr(photo, "filename", None)
+        ext = pathlib.Path(photo.filename).suffix.lower() if has_photo else ""
+        error = ("장소 이름을 입력해주세요." if not name
+                 else "JPG 사진을 올려주세요." if has_photo and ext not in (".jpg", ".jpeg") else None)
+        if error:
             conn.close()
-            ctx.update(flash="장소 이름을 입력해주세요.", flash_type="error")
+            ctx.update(flash=error, flash_type="error")
             return templates.TemplateResponse(request, "place_edit.html", ctx)
+        photo_path = place["photo_path"]
+        if has_photo:
+            fname = f"{uuid.uuid4().hex}{ext}"
+            (UPLOAD_DIR / fname).write_bytes(await photo.read())
+            photo_path = f"/static/uploads/places/{fname}"
         conn.execute(
-            "UPDATE places SET name=?, category=?, description=?, lat=?, lng=? WHERE id=?",
-            (name, category, description, coords[0], coords[1], place_id),
+            "UPDATE places SET name=?, category=?, description=?, lat=?, lng=?, photo_path=? WHERE id=?",
+            (name, category, description, coords[0], coords[1], photo_path, place_id),
         )
         conn.commit()
         conn.close()
+        if photo_path != place["photo_path"]:
+            remove_upload(place["photo_path"])
         return RedirectResponse(url=f"/places/{place_id}", status_code=303)
 
     conn.close()
@@ -93,10 +115,7 @@ async def place_delete(request):
         conn.execute("DELETE FROM favorites WHERE place_id=?", (place_id,))
         conn.execute("DELETE FROM places WHERE id=?", (place_id,))
         conn.commit()
-        # Only user uploads are removed; journal media stays (the journal still uses it)
-        path = place["photo_path"] or ""
-        if path.startswith("/static/uploads/places/"):
-            (UPLOAD_DIR / path.rsplit("/", 1)[1]).unlink(missing_ok=True)
+        remove_upload(place["photo_path"])
     conn.close()
     return RedirectResponse(url="/places", status_code=303)
 
