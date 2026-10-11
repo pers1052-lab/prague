@@ -48,6 +48,20 @@ Gmail 사용 시:
 
 **추천: Render.com 또는 Railway** (무료 티어 있음)
 
+### Render Blueprint로 배포 (가장 간단)
+
+저장소 루트의 `render.yaml`에 서비스 설정이 들어 있습니다.
+
+1. https://render.com 에 GitHub 계정으로 로그인
+2. 대시보드에서 **New > Blueprint** → `pers1052-lab/prague` 저장소 선택
+3. `SMTP_USER`, `SMTP_PASSWORD` 값 입력 (나머지는 자동 설정, `APP_SECRET_KEY`는 자동 생성)
+4. **Apply** → 빌드가 끝나면 `https://prague-guide.onrender.com` 같은 주소가 생깁니다
+
+`main` 브랜치에 푸시할 때마다 자동으로 다시 배포됩니다.
+무료 플랜은 15분간 접속이 없으면 잠들고, 다음 접속 때 깨어나는 데 30초~1분 정도 걸립니다.
+
+### 수동 설정
+
 1. 이 프로젝트를 GitHub 저장소로 푸시
 2. Render/Railway에서 "New Web Service" → 저장소 연결
 3. Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
