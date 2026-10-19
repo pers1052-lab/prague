@@ -308,6 +308,15 @@ footer.site-footer a { color: #fff; }
 .inquiry-meta { display: flex; gap: 10px; align-items: center; }
 .inquiry-body { margin: 8px 0 0; white-space: pre-wrap; }
 .tag { font-size: 0.78rem; padding: 2px 8px; border-radius: 999px; background: var(--fog); color: var(--ink-soft); border: 1px solid var(--line); }
+.admin-tabs { display: flex; gap: 8px; margin: 0 0 16px; flex-wrap: wrap; }
+.admin-tabs a { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-soft); text-decoration: none; font-size: 0.92rem; }
+.admin-tabs a.active { background: var(--slate); border-color: var(--slate); color: var(--white); }
+.table-scroll { overflow-x: auto; }
+table.data { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+table.data th { text-align: left; font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; padding: 8px 12px; border-bottom: 2px solid var(--slate); white-space: nowrap; }
+table.data td { padding: 10px 12px; border-bottom: 1px solid var(--line); }
+table.data .num { text-align: right; }
+table.data .nowrap { white-space: nowrap; }
 .tag.ok { background: #E8F2EC; color: var(--ok); border-color: #CFE3D6; }
 
 /* ---------- location picker ---------- */
