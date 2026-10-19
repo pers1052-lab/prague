@@ -6,17 +6,11 @@ from starlette.responses import PlainTextResponse, RedirectResponse
 from starlette.routing import Route
 
 from . import db as dbmod
+from . import storage
 from .auth import is_admin
 from .auth_router import get_current_user
-from .places_router import CATEGORIES, UPLOAD_DIR, parse_coords
+from .places_router import CATEGORIES, parse_coords
 from .templating import templates
-
-
-def remove_upload(photo_path):
-    # Only user uploads are removed; journal media stays (the journal still uses it)
-    path = photo_path or ""
-    if path.startswith("/static/uploads/places/"):
-        (UPLOAD_DIR / path.rsplit("/", 1)[1]).unlink(missing_ok=True)
 
 
 def require_admin(request):
@@ -86,9 +80,7 @@ async def place_edit(request):
             return templates.TemplateResponse(request, "place_edit.html", ctx)
         photo_path = place["photo_path"]
         if has_photo:
-            fname = f"{uuid.uuid4().hex}{ext}"
-            (UPLOAD_DIR / fname).write_bytes(await photo.read())
-            photo_path = f"/static/uploads/places/{fname}"
+            photo_path = storage.save_photo(await photo.read(), f"{uuid.uuid4().hex}{ext}")
         conn.execute(
             "UPDATE places SET name=?, category=?, description=?, lat=?, lng=?, photo_path=? WHERE id=?",
             (name, category, description, coords[0], coords[1], photo_path, place_id),
@@ -96,7 +88,7 @@ async def place_edit(request):
         conn.commit()
         conn.close()
         if photo_path != place["photo_path"]:
-            remove_upload(place["photo_path"])
+            storage.delete_photo(place["photo_path"])
         return RedirectResponse(url=f"/places/{place_id}", status_code=303)
 
     conn.close()
@@ -115,7 +107,7 @@ async def place_delete(request):
         conn.execute("DELETE FROM favorites WHERE place_id=?", (place_id,))
         conn.execute("DELETE FROM places WHERE id=?", (place_id,))
         conn.commit()
-        remove_upload(place["photo_path"])
+        storage.delete_photo(place["photo_path"])
     conn.close()
     return RedirectResponse(url="/places", status_code=303)
 

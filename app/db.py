@@ -1,8 +1,12 @@
-"""SQLite DB access layer (stdlib sqlite3 — no external DB driver needed for the
-initial deployment; swapping to PostgreSQL later only touches this file)."""
+"""DB access layer. DATABASE_URL이 있으면 PostgreSQL(배포용, 예: Neon 무료 DB),
+없으면 로컬 SQLite 파일을 씁니다. 라우터 코드는 두 경우 모두 `?` 자리표시자와
+row["컬럼"] 접근을 그대로 사용합니다."""
+import os
 import sqlite3
 import pathlib
 import datetime
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 DB_PATH = pathlib.Path(__file__).resolve().parent.parent / "data" / "app.db"
 DB_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -57,7 +61,27 @@ CREATE TABLE IF NOT EXISTS inquiries (
 """
 
 
+class _PgConn:
+    """Wraps a psycopg connection so callers can keep sqlite-style `?` placeholders."""
+
+    def __init__(self):
+        import psycopg
+        from psycopg.rows import dict_row
+        self._conn = psycopg.connect(DATABASE_URL, row_factory=dict_row)
+
+    def execute(self, sql, params=()):
+        return self._conn.execute(sql.replace("?", "%s"), params)
+
+    def commit(self):
+        self._conn.commit()
+
+    def close(self):
+        self._conn.close()
+
+
 def get_conn():
+    if DATABASE_URL:
+        return _PgConn()
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
@@ -66,7 +90,14 @@ def get_conn():
 
 def init_db():
     conn = get_conn()
-    conn.executescript(SCHEMA)
+    if DATABASE_URL:
+        schema = (SCHEMA.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY")
+                  .replace(" REAL ", " DOUBLE PRECISION "))
+        for stmt in schema.split(";"):
+            if stmt.strip():
+                conn.execute(stmt)
+    else:
+        conn.executescript(SCHEMA)
     conn.commit()
     conn.close()
 

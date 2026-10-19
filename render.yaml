@@ -1,0 +1,36 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Render 대시보드에서 "New > Blueprint"로 이 저장소를 연결하면 이 설정대로 웹 서비스가 만들어집니다.
+services:
+  - type: web
+    name: prague-guide
+    runtime: python
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: APP_SECRET_KEY
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: pers1052@gmail.com
+      - key: INQUIRY_TO_EMAIL
+        value: pers1052@gmail.com
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      # Neon(무료 PostgreSQL) 연결 주소. 없으면 서버 디스크의 SQLite를 써서 재시작 때 데이터가 사라집니다.
+      - key: DATABASE_URL
+        sync: false
+      # Cloudinary(무료 이미지 저장소) 주소: cloudinary://<api_key>:<api_secret>@<cloud_name>
+      - key: CLOUDINARY_URL
+        sync: false
+      # 아래 두 값은 비밀이라 저장소에 넣지 않습니다. 배포 시 Render 대시보드에서 입력하세요.
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false

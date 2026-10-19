@@ -7,6 +7,7 @@ from starlette.staticfiles import StaticFiles
 
 from . import db as dbmod
 from . import seed_places
+from . import storage
 from .templating import templates
 from .auth_router import get_current_user, routes as auth_routes
 from .journal_router import routes as journal_routes
@@ -25,6 +26,9 @@ async def home(request):
 
 @contextlib.asynccontextmanager
 async def lifespan(app):
+    # Shows up in the Render logs, so a missing DATABASE_URL / CLOUDINARY_URL is easy to spot
+    print("[storage] DB:", "PostgreSQL (DATABASE_URL)" if dbmod.DATABASE_URL else "SQLite (local disk, not persistent on Render)", flush=True)
+    print("[storage] Photos:", "Cloudinary (CLOUDINARY_URL)" if storage.CLOUDINARY_URL else "local disk (not persistent on Render)", flush=True)
     dbmod.init_db()
     seed_places.seed()
     yield
