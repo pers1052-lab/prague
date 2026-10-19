@@ -59,9 +59,9 @@ def seed():
         return
     # Owner account for the seeded places; the random hash means nobody can log in as it.
     uid = conn.execute(
-        "INSERT INTO users (email, password_hash, salt, nickname, created_at) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO users (email, password_hash, salt, nickname, created_at) VALUES (?, ?, ?, ?, ?) RETURNING id",
         (FAMILY_EMAIL, secrets.token_hex(32), secrets.token_hex(16), FAMILY_NICKNAME, dbmod.now()),
-    ).lastrowid
+    ).fetchone()["id"]
 
     for key, name, category, lat, lng, desc in PLACES:
         conn.execute(

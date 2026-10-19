@@ -8,12 +8,12 @@ from starlette.responses import RedirectResponse
 from starlette.routing import Route
 
 from . import db as dbmod
+from . import storage
 from .auth_router import get_current_user
 from .photo_gps import jpeg_gps
 from .templating import templates
 
-UPLOAD_DIR = pathlib.Path(__file__).resolve().parent / "static" / "uploads" / "places"
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+UPLOAD_DIR = storage.UPLOAD_DIR
 
 CATEGORIES = ["맛집", "카페", "관광지", "숙소", "기타"]
 
@@ -167,16 +167,15 @@ async def place_new_post(request):
         return fail("사진에서 위치 정보를 찾지 못했어요. 아래에서 장소를 검색하거나 지도를 눌러 위치를 표시해주세요.",
                     need_location=True, photo_token=fname)
     lat_f, lng_f = coords
-    photo_path = f"/static/uploads/places/{fname}"
+    photo_path = storage.publish_pending(fname)
 
     conn = dbmod.get_conn()
-    conn.execute(
+    place_id = conn.execute(
         """INSERT INTO places (user_id, name, category, lat, lng, description, photo_path, created_at)
-           VALUES (?,?,?,?,?,?,?,?)""",
+           VALUES (?,?,?,?,?,?,?,?) RETURNING id""",
         (user["id"], name, category, lat_f, lng_f, description, photo_path, dbmod.now()),
-    )
+    ).fetchone()["id"]
     conn.commit()
-    place_id = conn.execute("SELECT last_insert_rowid() as id").fetchone()["id"]
     conn.close()
 
     return RedirectResponse(url=f"/places/{place_id}", status_code=303)
