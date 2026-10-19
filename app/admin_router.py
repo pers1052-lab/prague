@@ -1,4 +1,5 @@
 """관리자 전용: 문의 내역 보기/삭제, 장소·리뷰 수정/삭제. 모든 핸들러가 서버에서 관리자 여부를 확인합니다."""
+import datetime
 import pathlib
 import uuid
 
@@ -7,9 +8,10 @@ from starlette.routing import Route
 
 from . import db as dbmod
 from . import storage
-from .auth import is_admin
+from .auth import ADMIN_EMAIL, is_admin
 from .auth_router import get_current_user
 from .places_router import CATEGORIES, parse_coords
+from .seed_places import FAMILY_EMAIL
 from .templating import templates
 
 
@@ -35,6 +37,30 @@ async def admin_home(request):
     return templates.TemplateResponse(request, "admin.html", {
         "active": "admin", "user": user, "inquiries": inquiries,
         "flash": "삭제했습니다." if request.query_params.get("deleted") else None,
+    })
+
+
+# ---------- 회원 ----------
+
+async def admin_users(request):
+    user, deny = require_admin(request)
+    if deny:
+        return deny
+    conn = dbmod.get_conn()
+    # Password hash/salt are never selected, so they can't leak into the page
+    members = conn.execute(
+        """SELECT users.id, users.email, users.nickname, users.created_at,
+                  (SELECT COUNT(*) FROM places WHERE places.user_id = users.id) AS place_count,
+                  (SELECT COUNT(*) FROM place_reviews WHERE place_reviews.user_id = users.id) AS review_count
+           FROM users WHERE users.email <> ? ORDER BY users.created_at DESC""",
+        (FAMILY_EMAIL,),
+    ).fetchall()
+    conn.close()
+    # created_at is stored in UTC; show Korea time (UTC+9)
+    members = [dict(m, joined_kst=(datetime.datetime.fromisoformat(m["created_at"]) + datetime.timedelta(hours=9))
+                    .strftime("%Y-%m-%d %H:%M")) for m in members]
+    return templates.TemplateResponse(request, "admin_users.html", {
+        "active": "admin", "user": user, "members": members, "admin_email": ADMIN_EMAIL.lower(),
     })
 
 
@@ -162,6 +188,7 @@ async def review_delete(request):
 
 routes = [
     Route("/admin", admin_home, methods=["GET"]),
+    Route("/admin/users", admin_users, methods=["GET"]),
     Route("/admin/inquiries/{inquiry_id:int}/delete", inquiry_delete, methods=["POST"]),
     Route("/places/{place_id:int}/edit", place_edit, methods=["GET", "POST"]),
     Route("/places/{place_id:int}/delete", place_delete, methods=["POST"]),

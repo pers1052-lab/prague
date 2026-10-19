@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}관리자 · 회원 목록{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>관리자</h1>
+  <p class="subtitle">회원가입한 사람들입니다. 최근 가입순으로 보여요. 비밀번호는 암호화되어 있어 관리자도 볼 수 없어요.</p>
+</div>
+{% include "_admin_tabs.html" %}
+
+<div class="panel">
+  <h2>회원 {{ members | length }}명</h2>
+  {% if members %}
+  <div class="table-scroll">
+    <table class="data">
+      <thead>
+        <tr><th>닉네임</th><th>이메일</th><th>가입일 (한국 시간)</th><th class="num">등록 장소</th><th class="num">리뷰</th></tr>
+      </thead>
+      <tbody>
+        {% for m in members %}
+        <tr>
+          <td>{{ m.nickname }}{% if m.email | lower == admin_email %} <span class="tag ok">관리자</span>{% endif %}</td>
+          <td><a href="mailto:{{ m.email }}">{{ m.email }}</a></td>
+          <td class="nowrap">{{ m.joined_kst }}</td>
+          <td class="num">{{ m.place_count }}</td>
+          <td class="num">{{ m.review_count }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="muted">아직 가입한 회원이 없습니다.</p>
+  {% endif %}
+</div>
+{% endblock %}
