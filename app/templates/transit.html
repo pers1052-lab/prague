@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}교통정보{% endblock %}
+{% block head %}{% include "_leaflet.html" %}<script src="/static/js/trams.js" defer></script>{% endblock %}
 {% block content %}
 <div class="page-head">
   <h1>프라하 대중교통 안내</h1>
@@ -18,6 +19,28 @@
   <p class="small muted" style="margin:16px 0 0;">티켓은 정류장 자동판매기, PID Lítačka 앱, 편의점(Trafika)에서 구매 가능합니다. 탑승 후 노란색 펀칭기에 반드시 개시(validate)해야 합니다.</p>
 </div>
 
+<div class="panel" id="trams">
+  <h2>트램 노선</h2>
+  <p class="small muted">번호를 누르면 정류장 순서와 지도 위 이동 경로가 나타나요. 지금 운행 중인 노선만 보여줍니다.</p>
+  <div id="tram-picker" class="tram-picker" aria-live="polite"><p class="muted">노선 정보를 불러오는 중…</p></div>
+
+  <div id="tram-detail" class="tram-detail" hidden>
+    <div class="tram-head">
+      <span class="tram-badge" id="tram-badge"></span>
+      <div>
+        <strong id="tram-title"></strong>
+        <div class="small muted" id="tram-sub"></div>
+      </div>
+    </div>
+    <div class="tram-dirs" id="tram-dirs" role="tablist" aria-label="운행 방향"></div>
+    <div class="tram-body">
+      <div id="tram-map" class="tram-map" role="region" aria-label="트램 경로 지도"></div>
+      <ol id="tram-stops" class="tram-stops"></ol>
+    </div>
+  </div>
+  <p class="small muted tram-source" id="tram-source"></p>
+</div>
+
 <div class="two-col">
   <div class="panel">
     <h2>주요 노선</h2>
@@ -31,7 +54,7 @@
     <h2>이용 팁</h2>
     <ul class="tips">
       <li>공항에서 시내까지는 119번 버스 + 지하철 A선 조합이 저렴하고 빠릅니다.</li>
-      <li>야간에는 노선번호 5xx대 나이트 트램이 운행됩니다.</li>
+      <li>자정 무렵부터 새벽까지는 91~99번 나이트 트램이 운행됩니다.</li>
       <li>PID Lítačka 공식 앱에서 실시간 노선과 티켓 구매가 모두 가능합니다.</li>
     </ul>
   </div>
