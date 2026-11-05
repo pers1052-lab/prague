@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}교통정보{% endblock %}
-{% block head %}{% include "_leaflet.html" %}<script src="{{ asset('js/trams.js') }}" defer></script>{% endblock %}
+{% block head %}{% include "_leaflet.html" %}<script src="{{ asset('js/transit-lines.js') }}" defer></script>{% endblock %}
 {% block content %}
 <div class="page-head">
   <h1>프라하 대중교통 안내</h1>
@@ -19,58 +19,58 @@
   <p class="small muted" style="margin:16px 0 0;">티켓은 정류장 자동판매기, PID Lítačka 앱, 편의점(Trafika)에서 구매 가능합니다. 탑승 후 노란색 펀칭기에 반드시 개시(validate)해야 합니다.</p>
 </div>
 
-<div class="panel" id="trams" data-src="{{ asset('data/trams.json') }}">
+{% macro line_detail(map_label) %}
+  <div class="line-detail" hidden>
+    <div class="line-head">
+      <span class="line-badge"></span>
+      <div>
+        <strong class="line-title"></strong>
+        <div class="small muted line-sub"></div>
+      </div>
+    </div>
+    <div class="line-dirs" role="tablist" aria-label="운행 방향"></div>
+    <div class="line-body">
+      <div class="line-map-wrap">
+        <div class="line-map" role="region" aria-label="{{ map_label }}"></div>
+        <p class="line-map-error small muted" hidden>지도를 불러오지 못했어요. 새로고침하거나 잠시 후 다시 열어주세요. 정류장 목록은 오른쪽(아래)에서 볼 수 있어요.</p>
+      </div>
+      <ol class="line-stops"></ol>
+    </div>
+  </div>
+  <p class="small muted line-source"></p>
+{% endmacro %}
+
+<div class="panel line-panel" id="trams" data-src="{{ asset('data/trams.json') }}" data-set="routes" data-hash="tram" data-unit="번 트램">
   <h2>트램 노선</h2>
   <p class="small muted">번호를 누르면 지도에 이동 경로가, 옆에 정류장이 순서대로 나와요. 지금 운행 중인 노선만 보여줍니다.</p>
-
-  <div class="tram-tabs" role="tablist" aria-label="트램 종류" hidden>
-    <button type="button" role="tab" class="tram-tab" data-kind="day" aria-selected="true">
-      <span class="tram-tab-title">☀ 주간 트램 <span class="tram-count" data-count="day"></span></span>
-      <span class="tram-tab-sub">새벽 ~ 자정</span>
+  <div class="line-tabs" role="tablist" aria-label="트램 종류" hidden>
+    <button type="button" role="tab" class="line-tab" data-kind="day" aria-selected="true">
+      <span class="line-tab-title">☀ 주간 트램 <span class="line-count" data-count="day"></span></span>
+      <span class="line-tab-sub">새벽 ~ 자정</span>
     </button>
-    <button type="button" role="tab" class="tram-tab" data-kind="night" aria-selected="false">
-      <span class="tram-tab-title">☾ 야간 트램 <span class="tram-count" data-count="night"></span></span>
-      <span class="tram-tab-sub">자정 ~ 새벽</span>
+    <button type="button" role="tab" class="line-tab" data-kind="night" aria-selected="false">
+      <span class="line-tab-title">☾ 야간 트램 <span class="line-count" data-count="night"></span></span>
+      <span class="line-tab-sub">자정 ~ 새벽</span>
     </button>
   </div>
-  <div id="tram-picker" class="tram-picker" aria-live="polite"><p class="muted">노선 정보를 불러오는 중…</p></div>
-
-  <div id="tram-detail" class="tram-detail" hidden>
-    <div class="tram-head">
-      <span class="tram-badge" id="tram-badge"></span>
-      <div>
-        <strong id="tram-title"></strong>
-        <div class="small muted" id="tram-sub"></div>
-      </div>
-    </div>
-    <div class="tram-dirs" id="tram-dirs" role="tablist" aria-label="운행 방향"></div>
-    <div class="tram-body">
-      <div class="tram-map-wrap">
-        <div id="tram-map" class="tram-map" role="region" aria-label="트램 경로 지도"></div>
-        <p class="tram-map-error small muted" id="tram-map-error" hidden>지도를 불러오지 못했어요. 새로고침하거나 잠시 후 다시 열어주세요. 정류장 목록은 오른쪽(아래)에서 볼 수 있어요.</p>
-      </div>
-      <ol id="tram-stops" class="tram-stops"></ol>
-    </div>
-  </div>
-  <p class="small muted tram-source" id="tram-source"></p>
+  <div class="line-picker" aria-live="polite"><p class="muted">노선 정보를 불러오는 중…</p></div>
+  {{ line_detail("트램 경로 지도") }}
 </div>
 
-<div class="two-col">
-  <div class="panel">
-    <h2>주요 노선</h2>
-    <ul class="lines">
-      <li><span class="badge">22</span><span><strong>트램 22번</strong>: 프라하성 방향 관광객이 가장 많이 이용하는 노선</span></li>
-      <li><span class="badge a">A</span><span><strong>지하철 A선(녹색)</strong>: 구시가지, 말라스트라나 방면</span></li>
-      <li><span class="badge b">B</span><span><strong>지하철 B선(노란색)</strong>: 중앙역, 나로드니 지구 방면</span></li>
-    </ul>
-  </div>
-  <div class="panel">
-    <h2>이용 팁</h2>
-    <ul class="tips">
-      <li>공항에서 시내까지는 119번 버스 + 지하철 A선 조합이 저렴하고 빠릅니다.</li>
-      <li>자정 무렵부터 새벽까지는 91~99번 나이트 트램이 운행됩니다.</li>
-      <li>PID Lítačka 공식 앱에서 실시간 노선과 티켓 구매가 모두 가능합니다.</li>
-    </ul>
-  </div>
+<div class="panel line-panel" id="metro" data-src="{{ asset('data/trams.json') }}" data-set="metro" data-hash="metro" data-unit="선 지하철">
+  <h2>지하철 노선</h2>
+  <p class="small muted">노선을 누르면 지도에 이동 경로가, 옆에 역이 순서대로 나와요. 새벽 5시 무렵부터 자정 무렵까지 운행합니다.</p>
+  <div class="line-picker" aria-live="polite"><p class="muted">노선 정보를 불러오는 중…</p></div>
+  {{ line_detail("지하철 경로 지도") }}
+</div>
+
+<div class="panel">
+  <h2>이용 팁</h2>
+  <ul class="tips">
+    <li>공항에서 시내까지는 119번 버스 + 지하철 A선 조합이 저렴하고 빠릅니다.</li>
+    <li>프라하성은 22번 트램으로 Pražský hrad(프라하성) 정류장에서 내리면 가깝습니다.</li>
+    <li>자정 무렵부터 새벽까지는 지하철이 다니지 않고 91~99번 나이트 트램이 운행됩니다.</li>
+    <li>PID Lítačka 공식 앱에서 실시간 노선과 티켓 구매가 모두 가능합니다.</li>
+  </ul>
 </div>
 {% endblock %}

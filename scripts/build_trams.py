@@ -1,4 +1,4 @@
-"""PID(프라하 대중교통) GTFS에서 지금 운행 중인 트램 노선을 뽑아 교통정보 화면용 JSON을 만듭니다.
+"""PID(프라하 대중교통) GTFS에서 지금 운행 중인 트램·지하철 노선을 뽑아 교통정보 화면용 JSON을 만듭니다.
 
     python scripts/build_trams.py PID_GTFS.zip app/static/data/trams.json
 
@@ -17,6 +17,8 @@ import zipfile
 from ko_names import to_korean
 
 TRAM_ROUTE_TYPE = "0"
+METRO_ROUTE_TYPES = {"1", "400", "401"}   # GTFS 기본값 1, 확장 코드 400/401 모두 지하철
+METRO_COLORS = {"A": "#00A562", "B": "#F2B200", "C": "#CF003D", "D": "#0072BC"}
 ACTIVE_WINDOW_DAYS = 7      # 이 기간 안에 한 번이라도 운행하면 "현재 운행 중"
 PATH_TOLERANCE = 0.00003    # 경로 단순화 허용 오차(도), 약 3m
 FREQUENT_SHARE = 0.4        # 가장 많이 다니는 경로의 40% 이상 운행하면 "주요 경로"로 보고, 그중 가장 긴 것을 고름
@@ -80,7 +82,8 @@ def build(gtfs_path, today=None):
     today = today or datetime.date.today()
     zf = zipfile.ZipFile(gtfs_path)
 
-    routes = {r["route_id"]: r for r in read(zf, "routes.txt") if r["route_type"] == TRAM_ROUTE_TYPE}
+    routes = {r["route_id"]: r for r in read(zf, "routes.txt")
+              if r["route_type"] == TRAM_ROUTE_TYPE or r["route_type"] in METRO_ROUTE_TYPES}
     services = active_services(zf, today)
 
     # (route, direction) -> shape -> [trip count, sample trip, headsign]
@@ -144,13 +147,15 @@ def build(gtfs_path, today=None):
         if not directions:
             continue  # 이번 주에 운행하지 않는 노선
         name = r.get("route_short_name") or route_id
+        metro = r["route_type"] in METRO_ROUTE_TYPES
         color = (r.get("route_color") or "").strip()
         out.append({
             "id": route_id,
             "name": name,
             "long_name": r.get("route_long_name", ""),
-            "color": "#" + color if color else "#7A0603",
-            "night": name.isdigit() and 90 <= int(name) <= 99,
+            "color": "#" + color if color else (METRO_COLORS.get(name, "#1D3140") if metro else "#7A0603"),
+            "night": not metro and name.isdigit() and 90 <= int(name) <= 99,
+            "metro": metro,
             "directions": directions,
         })
     out.sort(key=lambda r: route_sort_key(r["name"]))
@@ -162,7 +167,8 @@ def build(gtfs_path, today=None):
         "source": "PID GTFS (data.pid.cz)",
         "feed_version": feed.get("feed_version", ""),
         "valid_from": today.isoformat(),
-        "routes": out,
+        "routes": [r for r in out if not r["metro"]],   # trams (name kept for the existing page code)
+        "metro": [r for r in out if r["metro"]],
     }
 
 
@@ -172,8 +178,9 @@ def main():
     data = build(sys.argv[1])
     with open(sys.argv[2], "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
-    print(f"{len(data['routes'])} tram routes -> {sys.argv[2]}")
-    print(" ".join(r["name"] for r in data["routes"]))
+    print(f"{len(data['routes'])} tram + {len(data['metro'])} metro routes -> {sys.argv[2]}")
+    print("tram:", " ".join(r["name"] for r in data["routes"]))
+    print("metro:", " ".join(r["name"] for r in data["metro"]))
 
 
 if __name__ == "__main__":
