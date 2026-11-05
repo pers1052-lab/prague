@@ -10,6 +10,9 @@
     const n = parseInt(hex.slice(1), 16);
     return (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) > 170 ? '#1D2A33' : '#fff';
   };
+  // Search results open a line through this: TransitLines.open('metro', 'L991', 0, 'Můstek')
+  const controllers = {};
+  window.TransitLines = { open: (set, routeId, dir, stopName) => controllers[set] && controllers[set](routeId, dir, stopName) };
   const cache = {};
   const load = (src) => (cache[src] = cache[src] || fetch(src).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }));
 
@@ -17,9 +20,18 @@
     const q = (sel) => panel.querySelector(sel);
     const picker = q('.line-picker'), detail = q('.line-detail'), tabs = q('.line-tabs');
     const { set, hash, unit } = panel.dataset;
-    let routes = [], map, layer, current, dirIndex = 0;
+    let routes = [], map, layer, current, dirIndex = 0, markers = [];
 
-    load(panel.dataset.src)
+    const ready = load(panel.dataset.src);
+    controllers[set] = (routeId, dir, stopName) => ready.then(() => {
+      const r = routes.find((x) => x.id === routeId);
+      if (!r) return;
+      if (tabs) showKind(kindOf(r));
+      select(routeId, false);
+      if (dir && dir < r.directions.length) { dirIndex = dir; draw(); }
+      highlight(stopName);
+    });
+    ready
       .then((data) => {
         routes = data[set] || [];
         if (!routes.length) throw new Error('empty');
@@ -66,6 +78,21 @@
       if (scroll) detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    // Mark a stop in the list and on the map (used when arriving from the stop search)
+    function highlight(stopName) {
+      const i = current.directions[dirIndex].stops.findIndex((s) => s.name === stopName);
+      const items = q('.line-stops').children;
+      [...items].forEach((li) => li.classList.remove('is-hit'));
+      detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (i < 0) return;
+      items[i].classList.add('is-hit');
+      const list = q('.line-stops');
+      list.scrollTop = items[i].offsetTop - list.clientHeight / 2;
+      if (map && markers[i]) {
+        requestAnimationFrame(() => { map.invalidateSize(); map.setView(markers[i].getLatLng(), 15); markers[i].openTooltip(); });
+      }
+    }
+
     function draw() {
       const d = current.directions[dirIndex];
       q('.line-dirs').querySelectorAll('.line-dir').forEach((b) => b.setAttribute('aria-selected', String(+b.dataset.i === dirIndex)));
@@ -93,7 +120,7 @@
       L.polyline(d.path, { color: '#fff', weight: 9, opacity: 0.9 }).addTo(layer);
       const line = L.polyline(d.path, { color: current.color, weight: 5 }).addTo(layer);
       const stroke = ink(current.color) === '#fff' ? current.color : '#1D2A33';  // keep yellow markers visible
-      const markers = d.stops.map((s, i) => {
+      markers = d.stops.map((s, i) => {
         const end = i === 0 || i === d.stops.length - 1;
         return L.circleMarker([s.lat, s.lng], {
           radius: end ? 7 : 5, color: stroke, weight: 2, fillColor: end ? current.color : '#fff', fillOpacity: 1,

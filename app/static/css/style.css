@@ -358,7 +358,7 @@ form.stack .picker-search .btn { align-self: stretch; }
 .line-body { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; }
 .line-map { height: 460px; min-height: 300px; border-radius: var(--r-md); border: 1px solid var(--line); background: var(--fog); }
 .line-map-error { margin: 0; padding: 16px; border: 1px dashed var(--line); border-radius: var(--r-md); }
-.line-stops { margin: 0; padding: 0; list-style: none; counter-reset: stop; max-height: 460px; overflow-y: auto; border-left: 3px solid var(--route); }
+.line-stops { position: relative; margin: 0; padding: 0; list-style: none; counter-reset: stop; max-height: 460px; overflow-y: auto; border-left: 3px solid var(--route); }
 .line-stops li { counter-increment: stop; }
 .line-stops button { position: relative; display: flex; flex-wrap: wrap; column-gap: 6px; width: 100%; padding: 7px 10px 7px 40px; border: 0; background: none; text-align: left; font: 0.93rem var(--sans); color: var(--ink); cursor: pointer; }
 .line-stops button::before { content: counter(stop); position: absolute; left: 8px; width: 1.6em; color: var(--ink-soft); font-size: 0.8rem; text-align: right; padding-top: 2px; }
@@ -371,3 +371,16 @@ form.stack .picker-search .btn { align-self: stretch; }
   .line-map { height: 340px; }
   .line-stops { max-height: 320px; }
 }
+
+/* ---------- 교통정보: 정류장 검색 ---------- */
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.stop-search-form input { width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-md); font: 1rem var(--sans); color: var(--ink); background: var(--white); }
+.stop-search-form input:focus { outline: 2px solid var(--slate); outline-offset: 1px; }
+.stop-search-status { margin: 10px 0 0; }
+.stop-results { list-style: none; margin: 8px 0 0; padding: 0; max-height: 420px; overflow-y: auto; }
+.stop-result { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 10px 0; border-top: 1px solid var(--line); }
+.stop-result-name strong { color: var(--slate); }
+.stop-result-lines { display: flex; flex-wrap: wrap; gap: 6px; }
+.line-chip.small { min-width: 38px; height: 32px; padding: 0 8px; font-size: 0.9rem; }
+.line-stops li.is-hit button { background: var(--red-tint); }
+.line-stops li.is-hit .stop-cz { font-weight: 700; color: var(--slate); }
