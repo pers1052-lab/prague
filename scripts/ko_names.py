@@ -33,6 +33,15 @@ KNOWN = {
     "Vyšehrad": "비셰흐라드",
     "Karlovy lázně": "카를로비 라즈녜",
     "Letiště": "공항",
+    "Můstek": "무스텍",
+    "Hradčanská": "흐라드찬스카",
+    "Dejvická": "데이비츠카",
+    "Nemocnice Motol": "모톨 병원",
+    "Černý Most": "체르니 모스트",
+    "Háje": "하예",
+    "Letňany": "레트냐니",
+    "Zličín": "즐리친",
+    "Depo Hostivař": "호스티바르시 차량기지",
     "Anděl": "안델",
     "Újezd": "우예즈드",
     "Florenc": "플로렌츠",
@@ -52,7 +61,6 @@ KNOWN = {
     "Vozovna Motol": "모톨 차량기지",
     "Vozovna Žižkov": "지슈코프 차량기지",
     "Vozovna Strašnice": "스트라슈니체 차량기지",
-    "Depo Hostivař": "호스티바르시 차량기지",
 }
 
 # Generic words: translated, and moved to the end when they lead the name ("Nádraží X" -> "X 역")
