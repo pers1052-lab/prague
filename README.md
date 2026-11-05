@@ -33,7 +33,14 @@ uvicorn app.main:app --reload --reload-dir app --env-file .env --port 8000
 | 리뷰/평점 | 장소 상세 페이지 내 |
 | 즐겨찾기 | 장소 상세 페이지 버튼, 목록은 `/favorites` |
 | 문의하기(이메일) | `/inquiry` |
-| 교통정보 | `/transit` |
+| 교통정보 | `/transit` (트램·지하철 노선 지도, 정류장 검색) |
+
+## 트램·지하철 노선 데이터
+
+- `scripts/build_trams.py`가 PID 공식 GTFS에서 운행 중인 트램·지하철을 뽑아 `app/static/data/trams.json`을 만듭니다.
+  GitHub Actions(`.github/workflows/update-trams.yml`)가 매주 월요일 자동 실행합니다.
+- 서버가 켜질 때 이 파일 내용이 바뀌었으면 DB의 `transit_routes`, `transit_directions`, `transit_stops` 테이블로 다시 가져옵니다.
+- 화면은 `/api/transit/lines`(노선), `/api/transit/stops?q=`(정류장 검색, 체코어·한글, 특수문자 생략 가능)를 DB에서 읽습니다.
 
 ## 이메일 발송 설정
 

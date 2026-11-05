@@ -50,6 +50,43 @@ CREATE TABLE IF NOT EXISTS favorites (
     UNIQUE(user_id, place_id)
 );
 
+-- Tram/metro lines imported from app/static/data/trams.json (PID GTFS, refreshed weekly)
+CREATE TABLE IF NOT EXISTS transit_routes (
+    id TEXT PRIMARY KEY,
+    mode TEXT NOT NULL,
+    name TEXT NOT NULL,
+    long_name TEXT,
+    color TEXT NOT NULL,
+    night INTEGER NOT NULL DEFAULT 0,
+    sort_order INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS transit_directions (
+    route_id TEXT NOT NULL REFERENCES transit_routes(id),
+    direction INTEGER NOT NULL,
+    headsign TEXT NOT NULL,
+    headsign_ko TEXT,
+    path TEXT NOT NULL,
+    PRIMARY KEY (route_id, direction)
+);
+
+CREATE TABLE IF NOT EXISTS transit_stops (
+    route_id TEXT NOT NULL REFERENCES transit_routes(id),
+    direction INTEGER NOT NULL,
+    seq INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    name_ko TEXT,
+    lat REAL NOT NULL,
+    lng REAL NOT NULL,
+    search TEXT NOT NULL,
+    PRIMARY KEY (route_id, direction, seq)
+);
+
+CREATE TABLE IF NOT EXISTS transit_meta (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS inquiries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -71,6 +108,11 @@ class _PgConn:
 
     def execute(self, sql, params=()):
         return self._conn.execute(sql.replace("?", "%s"), params)
+
+    def executemany(self, sql, rows):
+        # psycopg pipelines executemany, so bulk imports to a remote DB stay fast
+        with self._conn.cursor() as cur:
+            cur.executemany(sql.replace("?", "%s"), rows)
 
     def commit(self):
         self._conn.commit()

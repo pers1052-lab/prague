@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}교통정보{% endblock %}
-{% block head %}{% include "_leaflet.html" %}<script src="{{ asset('js/transit-lines.js') }}" defer></script>{% endblock %}
+{% block head %}{% include "_leaflet.html" %}<script src="{{ asset('js/transit-lines.js') }}" defer></script><script src="{{ asset('js/transit-search.js') }}" defer></script>{% endblock %}
 {% block content %}
 <div class="page-head">
   <h1>프라하 대중교통 안내</h1>
@@ -17,6 +17,17 @@
     <tr><td>3일권</td><td>72시간</td><td>장기 체류 여행자에게 추천</td></tr>
   </table>
   <p class="small muted" style="margin:16px 0 0;">티켓은 정류장 자동판매기, PID Lítačka 앱, 편의점(Trafika)에서 구매 가능합니다. 탑승 후 노란색 펀칭기에 반드시 개시(validate)해야 합니다.</p>
+</div>
+
+<div class="panel stop-search" id="stop-search">
+  <h2>정류장 검색</h2>
+  <p class="small muted">트램·지하철 정류장을 체코어나 한글로 찾아보세요. 체코어 특수문자는 빼고 써도 돼요 (예: Mustek, 무스텍, namesti miru).</p>
+  <form class="stop-search-form" role="search" onsubmit="return false">
+    <label for="stop-q" class="visually-hidden">정류장 이름</label>
+    <input id="stop-q" type="search" placeholder="정류장 이름 입력" autocomplete="off" enterkeyhint="search">
+  </form>
+  <p class="small muted stop-search-status" aria-live="polite"></p>
+  <ul class="stop-results"></ul>
 </div>
 
 {% macro line_detail(map_label) %}
@@ -40,7 +51,7 @@
   <p class="small muted line-source"></p>
 {% endmacro %}
 
-<div class="panel line-panel" id="trams" data-src="{{ asset('data/trams.json') }}" data-set="routes" data-hash="tram" data-unit="번 트램">
+<div class="panel line-panel" id="trams" data-src="{{ lines_url }}" data-set="routes" data-hash="tram" data-unit="번 트램">
   <h2>트램 노선</h2>
   <p class="small muted">번호를 누르면 지도에 이동 경로가, 옆에 정류장이 순서대로 나와요. 지금 운행 중인 노선만 보여줍니다.</p>
   <div class="line-tabs" role="tablist" aria-label="트램 종류" hidden>
@@ -57,7 +68,7 @@
   {{ line_detail("트램 경로 지도") }}
 </div>
 
-<div class="panel line-panel" id="metro" data-src="{{ asset('data/trams.json') }}" data-set="metro" data-hash="metro" data-unit="선 지하철">
+<div class="panel line-panel" id="metro" data-src="{{ lines_url }}" data-set="metro" data-hash="metro" data-unit="선 지하철">
   <h2>지하철 노선</h2>
   <p class="small muted">노선을 누르면 지도에 이동 경로가, 옆에 역이 순서대로 나와요. 새벽 5시 무렵부터 자정 무렵까지 운행합니다.</p>
   <div class="line-picker" aria-live="polite"><p class="muted">노선 정보를 불러오는 중…</p></div>

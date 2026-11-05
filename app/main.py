@@ -8,6 +8,7 @@ from starlette.staticfiles import StaticFiles
 from . import db as dbmod
 from . import seed_places
 from . import storage
+from . import transit_data
 from .templating import templates
 from .auth_router import get_current_user, routes as auth_routes
 from .journal_router import routes as journal_routes
@@ -31,6 +32,10 @@ async def lifespan(app):
     print("[storage] Photos:", "Cloudinary (CLOUDINARY_URL)" if storage.CLOUDINARY_URL else "local disk (not persistent on Render)", flush=True)
     dbmod.init_db()
     seed_places.seed()
+    try:
+        transit_data.sync_from_file()
+    except Exception as exc:  # the rest of the site should still start
+        print(f"[transit] import failed: {exc!r}", flush=True)
     yield
 
 
