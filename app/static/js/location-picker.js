@@ -10,7 +10,7 @@
 
   const has = latIn.value && lngIn.value;
   const map = L.map(mapEl).setView(has ? [+latIn.value, +lngIn.value] : [50.0875, 14.4213], has ? 16 : 13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map);

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}교통정보{% endblock %}
-{% block head %}{% include "_leaflet.html" %}<script src="/static/js/trams.js" defer></script>{% endblock %}
+{% block head %}{% include "_leaflet.html" %}<script src="{{ asset('js/trams.js') }}" defer></script>{% endblock %}
 {% block content %}
 <div class="page-head">
   <h1>프라하 대중교통 안내</h1>
@@ -19,9 +19,20 @@
   <p class="small muted" style="margin:16px 0 0;">티켓은 정류장 자동판매기, PID Lítačka 앱, 편의점(Trafika)에서 구매 가능합니다. 탑승 후 노란색 펀칭기에 반드시 개시(validate)해야 합니다.</p>
 </div>
 
-<div class="panel" id="trams">
+<div class="panel" id="trams" data-src="{{ asset('data/trams.json') }}">
   <h2>트램 노선</h2>
-  <p class="small muted">번호를 누르면 정류장 순서와 지도 위 이동 경로가 나타나요. 지금 운행 중인 노선만 보여줍니다.</p>
+  <p class="small muted">번호를 누르면 지도에 이동 경로가, 옆에 정류장이 순서대로 나와요. 지금 운행 중인 노선만 보여줍니다.</p>
+
+  <div class="tram-tabs" role="tablist" aria-label="트램 종류" hidden>
+    <button type="button" role="tab" class="tram-tab" data-kind="day" aria-selected="true">
+      <span class="tram-tab-title">☀ 주간 트램 <span class="tram-count" data-count="day"></span></span>
+      <span class="tram-tab-sub">새벽 ~ 자정</span>
+    </button>
+    <button type="button" role="tab" class="tram-tab" data-kind="night" aria-selected="false">
+      <span class="tram-tab-title">☾ 야간 트램 <span class="tram-count" data-count="night"></span></span>
+      <span class="tram-tab-sub">자정 ~ 새벽</span>
+    </button>
+  </div>
   <div id="tram-picker" class="tram-picker" aria-live="polite"><p class="muted">노선 정보를 불러오는 중…</p></div>
 
   <div id="tram-detail" class="tram-detail" hidden>
@@ -34,7 +45,10 @@
     </div>
     <div class="tram-dirs" id="tram-dirs" role="tablist" aria-label="운행 방향"></div>
     <div class="tram-body">
-      <div id="tram-map" class="tram-map" role="region" aria-label="트램 경로 지도"></div>
+      <div class="tram-map-wrap">
+        <div id="tram-map" class="tram-map" role="region" aria-label="트램 경로 지도"></div>
+        <p class="tram-map-error small muted" id="tram-map-error" hidden>지도를 불러오지 못했어요. 새로고침하거나 잠시 후 다시 열어주세요. 정류장 목록은 오른쪽(아래)에서 볼 수 있어요.</p>
+      </div>
       <ol id="tram-stops" class="tram-stops"></ol>
     </div>
   </div>

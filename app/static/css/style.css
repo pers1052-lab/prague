@@ -334,11 +334,20 @@ form.stack .picker-search .btn { align-self: stretch; }
 .pending-photo { display: block; max-width: 100%; max-height: 260px; border-radius: var(--r-md); }
 
 /* ---------- 교통정보: 트램 노선 ---------- */
-.tram-group { margin-top: 14px; }
-.tram-group-title { font-size: 0.85rem; color: var(--ink-soft); font-weight: 600; margin-bottom: 8px; }
+.tram-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 16px 0 0; border: 1px solid var(--line); border-radius: var(--r-md) var(--r-md) 0 0; overflow: hidden; }
+.tram-tab { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 8px; border: 0; background: var(--fog); color: var(--ink-soft); font-family: var(--sans); cursor: pointer; }
+.tram-tab + .tram-tab { border-left: 1px solid var(--line); }
+.tram-tab-title { font-weight: 700; font-size: 1rem; }
+.tram-tab-sub { font-size: 0.8rem; }
+.tram-tab[aria-selected="true"] { background: var(--white); color: var(--slate); box-shadow: inset 0 -3px 0 var(--red); }
+.tram-tab[data-kind="night"][aria-selected="true"] { background: var(--slate); color: var(--white); box-shadow: inset 0 -3px 0 var(--gilt); }
+.tram-count { font-weight: 500; font-size: 0.85rem; opacity: 0.8; }
+.tram-tabs:not([hidden]) + .tram-picker { border: 1px solid var(--line); border-top: 0; border-radius: 0 0 var(--r-md) var(--r-md); padding: 16px; }
 .tram-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .tram-chip { min-width: 44px; height: 40px; padding: 0 10px; border-radius: var(--r-sm); border: 2px solid var(--tram); background: var(--white); color: var(--tram); font: 700 1rem var(--sans); cursor: pointer; }
 .tram-chip:hover, .tram-chip[aria-pressed="true"] { background: var(--tram); color: var(--white); }
+.tram-chip.night { border-color: var(--slate); color: var(--slate); }
+.tram-chip.night:hover, .tram-chip.night[aria-pressed="true"] { background: var(--slate); color: var(--white); }
 .tram-detail { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); scroll-margin-top: 80px; }
 .tram-head { display: flex; align-items: center; gap: 12px; }
 .tram-head strong { font-size: 1.1rem; color: var(--slate); }
@@ -346,12 +355,14 @@ form.stack .picker-search .btn { align-self: stretch; }
 .tram-dirs { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 12px; }
 .tram-dir { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--white); color: var(--ink-soft); font: 0.92rem var(--sans); cursor: pointer; }
 .tram-dir[aria-selected="true"] { background: var(--slate); border-color: var(--slate); color: var(--white); }
-.tram-body { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 16px; }
-.tram-map { height: 460px; border-radius: var(--r-md); border: 1px solid var(--line); }
+.tram-body { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; }
+.tram-map { height: 460px; min-height: 300px; border-radius: var(--r-md); border: 1px solid var(--line); background: var(--fog); }
+.tram-map-error { margin: 0; padding: 16px; border: 1px dashed var(--line); border-radius: var(--r-md); }
 .tram-stops { margin: 0; padding: 0; list-style: none; counter-reset: stop; max-height: 460px; overflow-y: auto; border-left: 3px solid var(--tram); }
 .tram-stops li { counter-increment: stop; }
-.tram-stops button { display: flex; gap: 10px; width: 100%; padding: 7px 10px; border: 0; background: none; text-align: left; font: 0.93rem var(--sans); color: var(--ink); cursor: pointer; }
-.tram-stops button::before { content: counter(stop); min-width: 1.6em; color: var(--ink-soft); font-size: 0.8rem; text-align: right; padding-top: 2px; }
+.tram-stops button { position: relative; display: flex; flex-wrap: wrap; column-gap: 6px; width: 100%; padding: 7px 10px 7px 40px; border: 0; background: none; text-align: left; font: 0.93rem var(--sans); color: var(--ink); cursor: pointer; }
+.tram-stops button::before { content: counter(stop); position: absolute; left: 8px; width: 1.6em; color: var(--ink-soft); font-size: 0.8rem; text-align: right; padding-top: 2px; }
+.tram-stops .stop-ko { color: var(--ink-soft); font-size: 0.85rem; font-weight: 400; }
 .tram-stops button:hover { background: var(--fog); }
 .tram-stops li:first-child button, .tram-stops li:last-child button { font-weight: 700; color: var(--slate); }
 .tram-source { margin: 16px 0 0; }

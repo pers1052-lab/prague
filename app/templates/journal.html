@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}우리 가족, 프라하 — 9박 10일 여행일기{% endblock %}
-{% block head %}<link rel="stylesheet" href="/static/css/journal.css">
+{% block head %}<link rel="stylesheet" href="{{ asset('css/journal.css') }}">
 {% include "_leaflet.html" %}{% endblock %}
 {% block main_class %}journal{% endblock %}
 {% block content %}
@@ -135,5 +135,5 @@
 </div>
 
 <script>const GALLERY = {{ gallery | tojson }};</script>
-<script src="/static/js/journal.js"></script>
+<script src="{{ asset('js/journal.js') }}"></script>
 {% endblock %}
