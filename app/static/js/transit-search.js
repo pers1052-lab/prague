@@ -28,7 +28,7 @@
       .then((r) => r.json())
       .then((data) => {
         status.textContent = !data.stops.length ? `"${q}"에 맞는 정류장이 없어요.`
-          : data.stops.length >= 20 ? '20곳 넘게 찾았어요. 이름을 조금 더 입력하면 좁혀져요. 노선을 누르면 지도에서 보여드려요.'
+          : data.stops.length >= 20 ? '20곳 이상 찾았어요. 이름을 조금 더 입력하면 좁혀져요. 노선을 누르면 지도에서 보여드려요.'
           : `${data.stops.length}곳을 찾았어요. 노선을 누르면 지도에서 보여드려요.`;
         list.innerHTML = data.stops.map((s) => `<li class="stop-result">
           <div class="stop-result-name"><strong>${esc(s.name)}</strong>${s.ko && s.ko !== s.name ? ` <span class="muted">(${esc(s.ko)})</span>` : ''}</div>
