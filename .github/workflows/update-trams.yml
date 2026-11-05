@@ -9,6 +9,7 @@ on:
   push:
     paths:
       - scripts/build_trams.py
+      - scripts/ko_names.py
       - .github/workflows/update-trams.yml
 
 permissions:

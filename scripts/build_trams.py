@@ -14,6 +14,8 @@ import json
 import sys
 import zipfile
 
+from ko_names import to_korean
+
 TRAM_ROUTE_TYPE = "0"
 ACTIVE_WINDOW_DAYS = 7      # 이 기간 안에 한 번이라도 운행하면 "현재 운행 중"
 PATH_TOLERANCE = 0.00003    # 경로 단순화 허용 오차(도), 약 3m
@@ -132,9 +134,11 @@ def build(gtfs_path, today=None):
                 continue
             pts = [(lat, lng) for _, lat, lng in sorted(shape_pts.get(shape, []))] or [(la, ln) for _, la, ln in seq]
             path = [[round(lat, 5), round(lng, 5)] for lat, lng in simplify(pts)]
+            headsign = headsign or seq[-1][0]
             directions.append({
-                "headsign": headsign or seq[-1][0],
-                "stops": [{"name": n, "lat": la, "lng": ln} for n, la, ln in seq],
+                "headsign": headsign,
+                "headsign_ko": to_korean(headsign),
+                "stops": [{"name": n, "ko": to_korean(n), "lat": la, "lng": ln} for n, la, ln in seq],
                 "path": path,
             })
         if not directions:
