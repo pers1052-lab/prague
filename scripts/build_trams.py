@@ -17,6 +17,7 @@ import zipfile
 TRAM_ROUTE_TYPE = "0"
 ACTIVE_WINDOW_DAYS = 7      # 이 기간 안에 한 번이라도 운행하면 "현재 운행 중"
 PATH_TOLERANCE = 0.00003    # 경로 단순화 허용 오차(도), 약 3m
+FREQUENT_SHARE = 0.4        # 가장 많이 다니는 경로의 40% 이상 운행하면 "주요 경로"로 보고, 그중 가장 긴 것을 고름
 
 
 def read(zf, name):
@@ -90,17 +91,24 @@ def build(gtfs_path, today=None):
         v = variants[key].setdefault(shape, [0, t["trip_id"], t.get("trip_headsign", "")])
         v[0] += 1
 
-    chosen = {}  # (route, direction) -> (shape_id, trip_id, headsign)
+    # Frequent variants per direction; short-turn trips (e.g. to a depot) can outnumber
+    # full-length ones, so among the frequent ones the longest stop sequence wins.
+    candidates = {}
     for key, shapes in variants.items():
-        shape, (count, trip_id, headsign) = max(shapes.items(), key=lambda kv: kv[1][0])
-        chosen[key] = (shape, trip_id, headsign)
-    want_trips = {trip for _, trip, _ in chosen.values()}
-    want_shapes = {shape for shape, _, _ in chosen.values()}
+        top = max(v[0] for v in shapes.values())
+        candidates[key] = [(shape, v) for shape, v in shapes.items() if v[0] >= top * FREQUENT_SHARE]
+    sample_trips = {v[1] for cands in candidates.values() for _, v in cands}
 
     trip_stops = collections.defaultdict(list)
     for st in read(zf, "stop_times.txt"):
-        if st["trip_id"] in want_trips:
+        if st["trip_id"] in sample_trips:
             trip_stops[st["trip_id"]].append((int(st["stop_sequence"]), st["stop_id"]))
+
+    chosen = {}  # (route, direction) -> (shape_id, trip_id, headsign)
+    for key, cands in candidates.items():
+        shape, (count, trip_id, headsign) = max(cands, key=lambda c: (len(trip_stops[c[1][1]]), c[1][0]))
+        chosen[key] = (shape, trip_id, headsign)
+    want_shapes = {shape for shape, _, _ in chosen.values()}
 
     stop_ids = {sid for seq in trip_stops.values() for _, sid in seq}
     stops = {s["stop_id"]: (s["stop_name"], round(float(s["stop_lat"]), 6), round(float(s["stop_lon"]), 6))
